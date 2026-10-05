@@ -867,7 +867,7 @@ class Ottobot extends Screen{
     else if(a.act==='sunrise') this.showScene(SCENE.SUNRISE);
     else if(a.act==='noon') this.showScene(SCENE.NOON);
     else if(a.act==='night') this.showScene(SCENE.NIGHT);
-    else if(['joke','game','simon','guess','rps','dino','lander','target','timer','snake','dice','slots','weather','focus','mood','water','countdown','video'].includes(a.act)) this.tap();  // the lab only laughs  // the lab only laughs; the robot tells a whole joke (startJoke)
+    else if(['joke','game','simon','guess','rps','dino','lander','target','timer','snake','dice','slots','ladder','flappy','tower','weather','focus','mood','water','countdown','video'].includes(a.act)) this.tap();  // the lab only laughs  // the lab only laughs; the robot tells a whole joke (startJoke)
   }
   showScene(kind){
     this.log(['Good morning! 🌅','Noon! 🌞','Good night! 🌙'][kind]); this.sceneKind=kind; this.setMode(M.SCENE); this.baseLook(); this.parts=[];
@@ -1157,7 +1157,7 @@ const REACTIONS=[
 const DEFAULT_KEYS=['padrao','feliz','cansado','confuso','rindo','estressado','piscadela','curioso','direcoes'];  // the robot's rotation until the phone changes it
 // Tap actions: built-in reactions, or "s:<key>" for a catalog screen. The robot starts with 1 = joy, 2 = dance, 5 = clock.
 const SCENE_ACTIONS=[['sunrise','Nascer do sol'],['noon','Meio-dia'],['night','Noite com lua (depois dorme)']];
-const TAP_ACTIONS=[['joy','Música feliz e risada'],['clock','Mostrar a hora'],['qr','QR code do site'],['pet','Carinho'],['sleep','Dormir'],['shake','Tonto e bravo'],['cheer','Comemorar'],['joke','Contar uma piada'],['game','Jogo de reflexo'],['simon','Jogo Genius'],['guess','Jogo adivinha o número'],['rps','Jogo pedra, papel e tesoura'],['dino','Jogo Dino'],['lander','Jogo pouso lunar'],['target','Jogo pare no alvo'],['timer','Jogo cronômetro'],['snake','Jogo Snake'],['dice','Dado'],['slots','Caça-níquel'],['weather','Previsão do tempo'],['focus','Pomodoro: 25 min de foco'],['mood','Perguntar como foi o dia'],['water','Lembrar de beber água'],['countdown','Contagem regressiva'],['video','Modo vídeo (1 min)']];
+const TAP_ACTIONS=[['joy','Música feliz e risada'],['clock','Mostrar a hora'],['qr','QR code do site'],['pet','Carinho'],['sleep','Dormir'],['shake','Tonto e bravo'],['cheer','Comemorar'],['joke','Contar uma piada'],['game','Jogo de reflexo'],['simon','Jogo Genius'],['guess','Jogo adivinha o número'],['rps','Jogo pedra, papel e tesoura'],['dino','Jogo Dino'],['lander','Jogo pouso lunar'],['target','Jogo pare no alvo'],['timer','Jogo cronômetro'],['snake','Jogo Snake'],['dice','Dado'],['slots','Caça-níquel'],['ladder','Jogo cobras e escadas'],['flappy','Jogo Flappy (passarinho)'],['tower','Jogo Torre de blocos'],['weather','Previsão do tempo'],['focus','Pomodoro: 25 min de foco'],['mood','Perguntar como foi o dia'],['water','Lembrar de beber água'],['countdown','Contagem regressiva'],['video','Modo vídeo (1 min)']];
 const DEFAULT_TAP_ROWS=[[1,'joy'],[2,'s:dancando'],[5,'clock'],[6,'qr']];
 // Times of day: minute of the day -> action. The robot starts with 07:00 sunrise, 12:00 noon, 20:00 night.
 const DEFAULT_EVENT_ROWS=[[420,'sunrise'],[720,'noon'],[1200,'night']];
