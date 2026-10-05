@@ -6,6 +6,9 @@ Um robozinho de mesa emocional: dois olhos animados numa telinha OLED, um sensor
 <img src="docs/telas/apaixonado.gif" width="200"> <img src="docs/telas/hipnotizado.gif" width="200"> <img src="docs/telas/festeiro.gif" width="200"> <img src="docs/reacoes/sunrise.gif" width="200">
 </p>
 
+> [!IMPORTANT]
+> **Os direitos de criação são do projeto original [MONSTRIX - Robot Emotional Companion](https://makerworld.com/pt/models/1941340-monstrix-robot-emotional-companion), de Igor Belyi**, que por sua vez é um remix do [LDR Little Robot](https://makerworld.com/en/models/222658), de Max Kern. Os dois são publicados no MakerWorld sob a licença [CC BY-SA](https://creativecommons.org/licenses/by-sa/4.0/deed.pt_BR). O Ottobot só aperfeiçoa o projeto: firmware novo, sensor de toque, buzzer, página web, app Android e os furos para ímãs na base.
+
 **▶ [Veja todas as telas animadas no simulador online](https://felipeotto20.github.io/ottobot/)**: é a mesma página que o robô serve no Wi-Fi, com o simulador dos olhos.
 
 **⬇ [Baixe a versão mais nova (firmware + app Android)](https://github.com/FelipeOtto20/ottobot/releases/latest)**
@@ -136,15 +139,23 @@ A coreografia é calculada no app para o tempo exato de cada batida e o robô da
 
 Instale pelo arquivo `ottobot.apk` da [última versão](https://github.com/FelipeOtto20/ottobot/releases/latest) ou pela página do robô (`http://ottobot.local`). Android 12 ou mais novo. Quando sai uma versão nova aqui, o app avisa e atualiza o robô e ele mesmo.
 
-## Hardware
+## Hardware e montagem
 
-| Peça | Ligação |
+**🔧 [Manual de montagem completo](MONTAGEM.md)**: peças, passo a passo das ligações com desenhos, como prender na caixa e problemas comuns.
+
+**🖨️ [Modelo 3D (OttoBot.3mf)](modelo-3d/README.md)**: a caixa do MONSTRIX com furos para ímãs de 4 × 2 mm na base.
+
+<p align="center"><img src="docs/montagem/mapa-de-pinos.svg" alt="Mapa de pinos" width="760"></p>
+
+| Peça | Pino do ESP32-C3 |
 |---|---|
-| ESP32-C3 (4 MB) | cérebro, Wi-Fi e Bluetooth |
-| OLED SSD1306 0,96" 128×64 (I2C, 0x3C) | SDA GPIO8, SCL GPIO9 |
-| MPU6050 (I2C) | mesmo barramento da tela |
-| Sensor de toque TTP223 | GPIO10 |
-| Buzzer passivo | GPIO20 |
+| Tela OLED 0,96" SSD1306 (I2C 0x3C) | SDA → GPIO8, SCL → GPIO9 |
+| MPU6050 (I2C 0x68) | SDA → GPIO8, SCL → GPIO9 (mesmos da tela) |
+| Sensor de toque TTP223 | I/O → GPIO10 (colado com cola quente por dentro da cabeça) |
+| Buzzer passivo | + → GPIO20 |
+| Todos | VCC → 3V3, GND → GND |
+
+A tela fica presa com mini parafusos.
 
 Bibliotecas: Adafruit SSD1306 e GFX, [FluxGarage RoboEyes](https://github.com/FluxGarage/RoboEyes) 1.1.1, MPU6050_light. Placa: ESP32 core 3.3, partição "Minimal SPIFFS (com OTA)".
 
@@ -155,6 +166,8 @@ Bibliotecas: Adafruit SSD1306 e GFX, [FluxGarage RoboEyes](https://github.com/Fl
 
 Para quem quiser mexer, o robô tem uma API HTTP simples: `/api/state`, `/api/config`, `/api/do`, `/api/show`, `/api/say`, `/api/song`, `/api/diary`, `/api/jokes`, `/api/update`.
 
-## Créditos
+## Créditos e direitos
 
-Baseado no Monstrix de Igor Fedorov (@igor.fedorov). Olhos animados pela biblioteca RoboEyes da FluxGarage. Clima do Open-Meteo, localização aproximada do ip-api.com.
+- **Projeto original e direitos de criação**: [MONSTRIX - Robot Emotional Companion](https://makerworld.com/pt/models/1941340-monstrix-robot-emotional-companion), de **Igor Belyi**, remix do [LDR Little Robot](https://makerworld.com/en/models/222658), de **Max Kern** (MakerWorld, CC BY-SA). O Ottobot é um aperfeiçoamento desse projeto.
+- Olhos animados pela biblioteca [RoboEyes](https://github.com/FluxGarage/RoboEyes), da FluxGarage.
+- Clima do [Open-Meteo](https://open-meteo.com/); localização aproximada do ip-api.com.
