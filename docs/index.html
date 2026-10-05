@@ -1,0 +1,1627 @@
+<!doctype html>
+<html lang="pt-BR">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Laboratório Ottobot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Silkscreen&display=swap" rel="stylesheet">
+<style>
+/* Layout: celular primeiro — cabeçalho fixo com 3 abas (Telas, Robô, Laboratório); Telas = catálogo em grade de módulos OLED com chave liga/desliga */
+:root{
+  --bg:#eceff4; --surface:#ffffff; --ink:#141c29; --muted:#566174; --line:#d3d9e3;
+  --accent:#9c5a14; --on-accent:#ffffff; --accent-soft:#f4e6d3;
+  --ok:#1d6f47; --ok-soft:#dcefe4; --warn:#9a6200; --warn-soft:#f6ead2; --crit:#b3261e; --crit-soft:#f9dedb;
+  --pcb:#1b3c73; --pcb-ink:#bccbe8; --pin:#d4a24c; --glass:#05070b; --term-ink:#a9bdd6;
+  --glow:rgb(228 240 255 / .55);
+  --f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --f-body:"Instrument Sans","Segoe UI",system-ui,sans-serif;
+  --f-silk:"Silkscreen",ui-monospace,monospace;
+  --f-code:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0e131b; --surface:#161d29; --ink:#e5eaf1; --muted:#98a3b5; --line:#273143;
+    --accent:#e2a35c; --on-accent:#1a1208; --accent-soft:#3a2a17;
+    --ok:#62cf98; --ok-soft:#15301f; --warn:#e0b04c; --warn-soft:#3a2d12; --crit:#f2766b; --crit-soft:#3d1a17;
+    --pcb:#1d3f7a; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0e131b; --surface:#161d29; --ink:#e5eaf1; --muted:#98a3b5; --line:#273143;
+  --accent:#e2a35c; --on-accent:#1a1208; --accent-soft:#3a2a17;
+  --ok:#62cf98; --ok-soft:#15301f; --warn:#e0b04c; --warn-soft:#3a2d12; --crit:#f2766b; --crit-soft:#3d1a17;
+  --pcb:#1d3f7a; color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 var(--f-body)}
+.wrap{max-width:1180px;margin-inline:auto;padding-block:0 72px;padding-inline:16px}
+.eyebrow{font:10px var(--f-silk);letter-spacing:.1em;color:var(--accent);text-transform:uppercase}
+h1{font:700 clamp(26px,5vw,36px)/1.05 var(--f-display);letter-spacing:-.02em;margin:0}
+h2{font:700 20px/1.15 var(--f-display);letter-spacing:-.01em;margin:0;text-wrap:balance}
+.lede{color:var(--muted);max-width:64ch;margin:0 0 12px}
+.hint{font-size:13px;color:var(--muted);margin:0}
+button{touch-action:manipulation}
+a{color:var(--accent)}
+
+/* Header + tabs */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:14px 12px;margin-bottom:16px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.tabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin-top:12px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:4px;max-width:720px}
+.seg.seg3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.tabs button{border:0;border-radius:7px;background:none;color:var(--ink);font:600 15px var(--f-body);padding:8px 4px;min-height:40px;cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--ink);color:var(--surface)}
+.tabs button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.tabs svg{display:none;width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* Phone: tabs become a bottom bar, in reach of the thumb */
+@media (max-width:719px){
+  .top{padding-block:10px}
+  .eyebrow{display:none}
+  h1{font-size:24px}
+  .tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;margin:0;max-width:none;gap:2px;border:0;border-top:1px solid var(--line);border-radius:0;padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px));box-shadow:0 -2px 10px rgb(0 0 0 / .08)}
+  .tabs button{display:grid;justify-items:center;align-content:center;gap:3px;font-size:11px;min-height:54px;padding:4px 1px;min-width:0;overflow:hidden;text-overflow:ellipsis}
+  .tabs svg{display:block}
+  .tabs button[aria-selected="true"]{background:var(--accent-soft);color:var(--accent)}
+  .wrap{padding-block-end:calc(100px + env(safe-area-inset-bottom,0px))}
+  .toast{bottom:calc(84px + env(safe-area-inset-bottom,0px))!important}
+}
+.pill{display:inline-flex;align-items:center;font:600 12.5px/1.3 var(--f-body);padding:4px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.pill.live{background:var(--ok-soft);color:var(--ok)}
+
+/* SSD1306 module: blue PCB, 4 mounting holes, header pins on top */
+.module{--hole:10px;position:relative;border-radius:6px;padding:30px 22px 14px;
+  background:
+    radial-gradient(circle at var(--hole) var(--hole),var(--bg) 0 3px,var(--pin) 3.5px 5px,transparent 5.5px),
+    radial-gradient(circle at calc(100% - var(--hole)) var(--hole),var(--bg) 0 3px,var(--pin) 3.5px 5px,transparent 5.5px),
+    radial-gradient(circle at var(--hole) calc(100% - var(--hole)),var(--bg) 0 3px,var(--pin) 3.5px 5px,transparent 5.5px),
+    radial-gradient(circle at calc(100% - var(--hole)) calc(100% - var(--hole)),var(--bg) 0 3px,var(--pin) 3.5px 5px,transparent 5.5px),
+    var(--pcb);
+  box-shadow:0 1px 2px rgb(0 0 0 / .25)}
+.pins{position:absolute;top:6px;left:50%;transform:translateX(-50%);display:flex;gap:12px;font:8px/1 var(--f-silk);color:var(--pcb-ink)}
+.pins span{display:grid;justify-items:center;gap:3px}
+.pins span::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--pin);box-shadow:inset 0 0 0 2px rgb(0 0 0 / .35)}
+.glass{background:var(--glass);padding:5% 3.5%;border-radius:2px}
+canvas{display:block;width:100%;height:auto;aspect-ratio:2/1;image-rendering:pixelated}
+.big canvas{filter:drop-shadow(0 0 3px var(--glow))}
+.silk{font:9px/1 var(--f-silk);color:var(--pcb-ink);text-align:center;margin-top:10px;letter-spacing:.06em}
+.module.mini{--hole:6px;padding:16px 9px 9px;border-radius:5px}
+.mini .pins{top:3px;gap:6px;font-size:5.5px}
+.mini .pins span::before{width:4px;height:4px}
+
+/* Catalog */
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:12px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chips button{flex:none;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);font:500 14px var(--f-body);padding:6px 12px;min-height:36px;cursor:pointer}
+.chips button span{color:var(--muted)}
+.chips button[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.chips button[aria-pressed="true"] span{color:inherit;opacity:.75}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(152px,1fr));gap:12px}
+@media (min-width:720px){.grid{grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px}}
+.card{display:grid;align-content:start;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px;min-width:0}
+.card.picked{border-color:var(--ok);box-shadow:0 0 0 1px var(--ok)}
+.card.on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.card-prev{display:block;width:100%;background:none;border:0;padding:0;cursor:pointer;border-radius:5px}
+.card-prev:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.card-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-inline:2px}
+.card h3{font:700 15px/1.2 var(--f-display);margin:0;min-width:0;overflow-wrap:anywhere}
+.card p{margin:0;padding-inline:2px;color:var(--muted);font-size:12.5px;line-height:1.35}
+.card .btn{justify-self:start}
+.switch{position:relative;display:inline-flex;flex:none;width:44px;height:26px;cursor:pointer}
+.switch input{position:absolute;inset:0;width:100%;height:100%;opacity:0;margin:0;cursor:pointer}
+.switch span{position:absolute;inset:0;border-radius:999px;background:var(--line);transition:background .15s}
+.switch span::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:var(--surface);box-shadow:0 1px 2px rgb(0 0 0 / .3);transition:transform .15s}
+.switch input:checked+span{background:var(--ok)}
+.switch input:checked+span::after{transform:translateX(18px)}
+.switch input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
+.switch input:disabled+span{opacity:.5}
+
+/* Robot tab */
+.stack{display:grid;gap:16px;max-width:860px}
+.box{display:grid;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;min-width:0}
+.box ol{margin:0;padding-left:20px}
+.box p{margin:0}
+.box-h{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.field{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px;flex-wrap:wrap}
+.stepper{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.stepper button{width:40px;height:40px;border:0;background:var(--surface);color:var(--ink);font:600 18px var(--f-body);cursor:pointer}
+.stepper button:disabled{opacity:.4;cursor:default}
+.stepper input{width:3.4em;height:40px;border:0;border-inline:1px solid var(--line);text-align:center;font:600 15px var(--f-code);color:var(--ink);background:var(--surface);-moz-appearance:textfield;appearance:textfield}
+.stepper input::-webkit-inner-spin-button,.stepper input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.txt{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 10px;min-height:40px;min-width:0;width:min(100%,280px)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+/* Taps */
+.tap-list{display:grid;gap:10px}
+.tap-row{display:grid;grid-template-columns:56px minmax(0,1fr) 112px;gap:12px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:12px}
+@media (max-width:440px){.tap-row{grid-template-columns:48px minmax(0,1fr)} .tap-prev{grid-column:2;max-width:220px}}
+.tap-n{display:grid;justify-items:center;gap:3px}
+.tap-n b{font:700 24px/1 var(--f-display)}
+.tap-n span{font-size:9px;letter-spacing:2px;color:var(--accent)}
+.tap-main{display:grid;gap:6px;min-width:0}
+.tap-main label{font-weight:600}
+.tap-main select{width:100%;min-height:40px}
+.tap-btns{display:flex;flex-wrap:wrap;gap:6px}
+.fixed{margin:0;padding-left:18px;display:grid;gap:6px}
+.nets{display:grid;gap:6px}
+.net{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:10px 12px;min-height:44px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);font:inherit;cursor:pointer}
+.net:hover{border-color:var(--ink)}
+.net:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.net[aria-pressed="true"]{border-color:var(--ok);box-shadow:0 0 0 1px var(--ok)}
+.net-name{flex:1;min-width:0;font-weight:600;overflow-wrap:anywhere}
+.net-meta{font-size:12.5px;color:var(--muted);white-space:nowrap}
+.bars{display:inline-flex;align-items:flex-end;gap:2px;height:14px;flex:none}
+.bars i{width:3px;border-radius:1px;background:var(--line)}
+.bars i.on{background:var(--ink)}
+/* Performance */
+.state{display:inline-flex;align-items:center;gap:6px;font:600 12.5px/1.3 var(--f-body);padding:4px 10px;border-radius:999px;background:var(--line);color:var(--muted);white-space:nowrap}
+.state.ok{background:var(--ok-soft);color:var(--ok)}
+.state.warn{background:var(--warn-soft);color:var(--warn)}
+.state.crit{background:var(--crit-soft);color:var(--crit)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.tile{display:grid;gap:2px;align-content:start;padding:10px 12px;border:1px solid var(--line);border-radius:10px;min-width:0}
+.t-label{font-size:12.5px;color:var(--muted)}
+.t-value{font:600 22px/1.15 var(--f-body);color:var(--ink);overflow-wrap:anywhere}
+.t-sub{font-size:12px;color:var(--muted);overflow-wrap:anywhere}
+.spark{margin:0;display:grid;gap:6px}
+.spark figcaption{font-size:12.5px;color:var(--muted)}
+.spark-wrap{position:relative;touch-action:pan-y}
+.spark svg{display:block;width:100%;height:72px;overflow:visible}
+.spark .ln{fill:none;stroke:var(--muted);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.spark .ar{fill:var(--muted);opacity:.12}
+.spark .base{stroke:var(--line);stroke-width:1}
+.spark .th{stroke:var(--warn);stroke-width:1;stroke-dasharray:4 4}
+.spark .th-l{fill:var(--muted);font:11px var(--f-body)}
+.spark .dot{fill:var(--accent);stroke:var(--surface);stroke-width:2}
+.spark .xh{stroke:var(--ink);stroke-width:1;opacity:.35}
+.spark-tip{position:absolute;top:0;transform:translate(-50%,-110%);background:var(--ink);color:var(--surface);font:600 12px var(--f-body);padding:3px 8px;border-radius:6px;white-space:nowrap;pointer-events:none}
+
+/* Lab */
+.lab{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:24px;align-items:start}
+@media (max-width:880px){.lab{grid-template-columns:minmax(0,1fr)}}
+.left{display:grid;gap:16px;min-width:0}
+.status{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted)}
+.robot{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.touch{grid-column:span 2;display:grid;place-items:center;gap:2px;padding:16px 12px;border:0;border-radius:12px;background:var(--accent);color:var(--on-accent);font:700 20px/1.1 var(--f-display);cursor:pointer;user-select:none;-webkit-user-select:none;touch-action:none}
+.touch small,.act small{font:500 12px/1.3 var(--f-body);opacity:.85}
+.touch.held{box-shadow:inset 0 0 0 3px var(--on-accent)}
+.touch:focus-visible,.act:focus-visible,.btn:focus-visible,.dir button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.act{display:grid;place-items:center;gap:2px;padding:14px 10px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font:700 16px/1.1 var(--f-display);cursor:pointer}
+.act:hover,.btn:hover{border-color:var(--ink)}
+.opts{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;font-size:14px}
+select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:5px 6px;min-height:36px;max-width:100%}
+.serial{background:var(--glass);border-radius:10px;padding:10px 14px;color:var(--term-ink)}
+.serial-h{font:9px var(--f-silk);letter-spacing:.08em;opacity:.7;margin-bottom:6px}
+.serial pre{margin:0;font:12.5px/1.55 var(--f-code);min-height:9.3em;white-space:pre-wrap;overflow-wrap:anywhere}
+.code-h{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;font-weight:600}
+.code pre{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;overflow-x:auto;font:13px/1.6 var(--f-code)}
+.panel{display:grid;gap:18px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;min-width:0}
+fieldset{border:0;padding:0;margin:0;display:grid;gap:8px;min-width:0}
+legend{font:600 11.5px var(--f-body);text-transform:uppercase;letter-spacing:.09em;color:var(--muted);padding:0;margin-bottom:8px}
+.seg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg label{position:relative;text-align:center;padding:7px 2px;cursor:pointer;font-weight:500;font-size:14px}
+.seg label+label{border-left:1px solid var(--line)}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label:has(input:checked){background:var(--ink);color:var(--surface)}
+.seg label:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:-2px}
+.dir-row{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:center}
+.dir{display:grid;grid-template-columns:repeat(3,36px);gap:4px}
+.dir button{height:36px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);font:16px/1 var(--f-body);cursor:pointer}
+.dir button[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.togs{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px 14px}
+.tog{display:flex;gap:8px;align-items:center;cursor:pointer;font-size:14px}
+input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;margin:0}
+.sl{display:grid;grid-template-columns:minmax(0,9.5em) minmax(0,1fr) 4ch;gap:10px;align-items:center;font-size:14px}
+input[type=range]{width:100%;accent-color:var(--accent);margin:0}
+output{font:500 13px var(--f-code);text-align:right;font-variant-numeric:tabular-nums}
+.btns{display:flex;flex-wrap:wrap;gap:6px}
+.btn{font:500 14px var(--f-body);background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:6px 11px;min-height:36px;cursor:pointer}
+.btn.sm{font-size:13px;padding:4px 10px;min-height:32px}
+.btn.primary{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.btn:disabled{opacity:.5;cursor:default}
+.foot{margin-top:40px;color:var(--muted);font-size:13px;max-width:72ch}
+.toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:9px 16px;border-radius:999px;font-weight:600;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:9;max-width:calc(100% - 32px);text-align:center}
+.toast.on{opacity:1}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div><span class="eyebrow">ESP32-C3 · SSD1306 · RoboEyes 1.1.1</span><h1>Ottobot</h1></div>
+      <span class="pill" id="link">Sem conexão</span>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Seções">
+      <button role="tab" type="button" id="tab-telas" aria-controls="p-telas" aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Telas</button>
+      <button role="tab" type="button" id="tab-toques" aria-controls="p-toques" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="3"/><circle cx="12" cy="13" r="8" stroke-dasharray="3 3"/></svg>Toques</button>
+      <button role="tab" type="button" id="tab-horas" aria-controls="p-horas" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Horários</button>
+      <button role="tab" type="button" id="tab-robo" aria-controls="p-robo" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="7" width="16" height="13" rx="3"/><circle cx="9.5" cy="13.5" r="1.2"/><circle cx="14.5" cy="13.5" r="1.2"/><path d="M12 7V4"/></svg>Robô</button>
+      <button role="tab" type="button" id="tab-lab" aria-controls="p-lab" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>Laboratório</button>
+    </div>
+  </header>
+
+  <section id="p-telas" role="tabpanel" aria-labelledby="tab-telas">
+    <p class="lede">Ligue as telas que o Ottobot sorteia: <b id="count">9 telas</b> no rodízio. <span class="offline-only">Sem conexão com o robô: abra esta página pelo Wi-Fi do Ottobot para salvar.</span></p>
+    <div class="chips" id="filter" role="group" aria-label="Filtrar telas"></div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section id="p-toques" role="tabpanel" aria-labelledby="tab-toques" hidden>
+    <div class="stack">
+      <div class="box">
+        <h2>Toques rápidos</h2>
+        <p class="hint">Escolha o que o Ottobot faz com cada quantidade de toques seguidos. Uma quantidade sem nada usa a menor que tiver: sem nada em 3, ele faz o de 2. <span class="offline-only">Para salvar no robô, abra esta página pelo Wi-Fi do Ottobot.</span></p>
+        <div class="tap-list" id="tapList"></div>
+        <div class="row"><label for="tapAddN">Novo toque</label><select id="tapAddN"></select><button class="btn primary" id="tapAdd" type="button">Adicionar</button></div>
+      </div>
+      <div class="box">
+        <h2>Sempre iguais</h2>
+        <ul class="fixed">
+          <li><b>Segurar</b>: carinho (olhos ^ ^, corações, ronrona).</li>
+          <li><b>Dormindo</b>: 1 toque toca canção de ninar; 3 toques rápidos acordam.</li>
+          <li><b>Bravo ou tonto</b>: um toque acalma.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="p-horas" role="tabpanel" aria-labelledby="tab-horas" hidden>
+    <div class="stack">
+      <div class="box">
+        <h2>Horários do dia</h2>
+        <p class="hint">Em cada horário ele mostra uma cena ou faz uma ação, uma vez por dia. Começa com nascer do sol às 7h, meio-dia às 12h e noite com lua às 20h (depois da noite ele dorme). Usa a hora do robô: da internet ou do celular quando você abre esta página. <span class="offline-only">Para salvar no robô, abra pelo Wi-Fi do Ottobot.</span></p>
+        <div class="tap-list" id="eventList"></div>
+        <div class="row"><label for="evAddT">Novo horário</label><input class="txt" type="time" id="evAddT" value="18:00" style="width:auto"><button class="btn primary" id="evAdd" type="button">Adicionar</button></div>
+      </div>
+      <div class="box">
+        <h2>Sono</h2>
+        <div class="seg seg3" role="radiogroup" aria-label="Quando ele dorme">
+          <label><input type="radio" name="smode" value="0">Sem mexer</label>
+          <label><input type="radio" name="smode" value="1">Só à noite</label>
+          <label><input type="radio" name="smode" value="2">Nunca</label>
+        </div>
+        <div class="field" id="sleepIdle"><span>Dorme depois de (minutos sem toque nem movimento)</span>
+          <span class="stepper"><button type="button" data-step="cfgSleep,-1" aria-label="Menos">−</button><input id="cfgSleep" type="number" min="1" max="120" value="2" inputmode="numeric" aria-label="Minutos até dormir"><button type="button" data-step="cfgSleep,1" aria-label="Mais">+</button></span></div>
+        <div class="field" id="sleepNight" hidden><span>Dorme das</span><span class="row"><input class="txt" type="time" id="cfgBedFrom" value="21:00" style="width:auto" aria-label="Hora de dormir"> até <input class="txt" type="time" id="cfgBedTo" value="07:00" style="width:auto" aria-label="Hora de acordar"></span></div>
+        <p class="hint" id="sleepHint"></p>
+      </div>
+      <div class="box">
+        <div class="box-h"><h2>Silêncio</h2><span class="state" id="silentNow" hidden>🔇 Em silêncio agora</span></div>
+        <div class="field"><span>Silenciar tudo</span><label class="switch"><input type="checkbox" id="cfgMute" aria-label="Silenciar tudo"><span></span></label></div>
+        <div class="field"><span>Silenciar em horário</span><label class="switch"><input type="checkbox" id="cfgQuiet" aria-label="Silenciar em horário"><span></span></label></div>
+        <div class="field"><span>Das</span><span class="row"><input class="txt" type="time" id="cfgQFrom" value="22:00" style="width:auto" aria-label="Silêncio começa"> até <input class="txt" type="time" id="cfgQTo" value="07:00" style="width:auto" aria-label="Silêncio termina"></span></div>
+        <p class="hint">Em silêncio ele continua fazendo tudo, só sem som.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="p-robo" role="tabpanel" aria-labelledby="tab-robo" hidden>
+    <div class="stack">
+      <div class="box">
+        <h2>Agora</h2>
+        <p class="robot-only" hidden>O Ottobot está em: <b id="robotNow">…</b></p>
+        <p class="robot-only" hidden>Hora no robô: <b id="robotTime">…</b>. Para ver no visor, use o toque da hora (aba Toques; começa em 5 toques).</p>
+        <div class="row robot-only" hidden>
+          <label for="robotLove">Carinho</label>
+          <meter id="robotLove" min="0" max="100" low="30" high="60" optimum="100" value="70" style="flex:1;min-width:120px;height:18px"></meter>
+          <b id="robotLoveTxt">…</b>
+          <button class="btn sm cfg" type="button" id="btnLonely">Deixar carente</button>
+        </div>
+        <p class="hint robot-only" hidden>O carinho cai sozinho com o tempo (de cheio a vazio em 3 h; para no horário de dormir). Fazer carinho segurando e dar toques enche, chacoalhar tira um pouco. Abaixo de 30 aparece um coração vazio e ele pede carinho; abaixo de 10 ele chora.</p>
+        <div class="offline-only">
+          <p class="hint">Para controlar pelo celular:</p>
+          <ol>
+            <li>Conecte no Wi-Fi <b>Ottobot</b>, senha <b>ottobot1</b> (ou a que você criou no app).</li>
+            <li>A página abre sozinha. Se não abrir, desligue os dados móveis e acesse <b>192.168.4.1</b>.</li>
+            <li>Ou, depois de colocar o robô no Wi-Fi de casa, abra <b>http://ottobot.local</b> sem sair da sua internet.</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="box robot-only" hidden>
+        <h2>App Android</h2>
+        <p>Converse com o Ottobot por IA, mande comandos rápidos e deixe ele fazer festa quando você chega perto (Bluetooth). Avisa no celular quando ele fica carente.</p>
+        <p><a class="btn" href="/ottobot.apk" download="ottobot.apk" style="display:inline-flex;align-items:center;text-decoration:none">Baixar o app (APK)</a></p>
+        <p class="hint">Android 12 ou mais novo. Abra esta página no Chrome (não na janela de login do Wi-Fi) e toque em Baixar; o Android pede para permitir instalar apps do navegador.</p>
+      </div>
+
+      <div class="box robot-only" hidden>
+        <h2>Atualizar o robô</h2>
+        <p class="hint">Escolha o arquivo de firmware (.bin), digite a senha do Wi-Fi Ottobot e envie: ele grava sem cabo e reinicia sozinho em uns 30 segundos.</p>
+        <p class="row"><input type="file" id="otaFile" accept=".bin"><input type="password" id="otaPass" placeholder="senha do Wi-Fi Ottobot" autocomplete="off"><button class="btn" type="button" id="otaSend">Enviar</button></p>
+        <p class="hint" id="otaState"></p>
+      </div>
+
+      <div class="box">
+        <div class="box-h"><h2>Desempenho</h2><span class="state" id="perfState">Sem dados</span></div>
+        <div class="tiles">
+          <div class="tile"><span class="t-label">Quadros por segundo</span><span class="t-value" id="pFps">–</span></div>
+          <div class="tile"><span class="t-label">Pior pausa</span><span class="t-value" id="pMax">–</span><span class="t-sub">últimos 3 s</span></div>
+          <div class="tile"><span class="t-label">Volta do loop</span><span class="t-value" id="pAvg">–</span><span class="t-sub">média</span></div>
+          <div class="tile"><span class="t-label">Memória livre</span><span class="t-value" id="pHeap">–</span><span class="t-sub" id="pHeapMin"></span></div>
+          <div class="tile"><span class="t-label">Temperatura do chip</span><span class="t-value" id="pTemp">–</span></div>
+          <div class="tile"><span class="t-label">Ligado há</span><span class="t-value" id="pUp">–</span><span class="t-sub" id="pReset"></span></div>
+          <div class="tile"><span class="t-label">Wi-Fi</span><span class="t-value" id="pWifi">–</span><span class="t-sub" id="pWifiSub"></span></div>
+        </div>
+        <figure class="spark">
+          <figcaption>Pior pausa a cada 3 s, últimos 2 min. Acima da linha tracejada (120 ms) dá para ver ele engasgar.</figcaption>
+          <div class="spark-wrap"><svg id="pSpark" role="img" aria-label="Sem dados ainda"></svg><div class="spark-tip" id="pTip" hidden></div></div>
+        </figure>
+        <p class="hint offline-only">Os números aparecem quando a página é aberta pelo Wi-Fi do Ottobot.</p>
+      </div>
+
+      <div class="box">
+        <h2>Reações</h2>
+        <p class="hint">O que ele faz quando você segura, chacoalha, deixa ele parado ou quando o Wi-Fi conecta. Os toques rápidos ficam na aba Toques.</p>
+        <div class="grid" id="reactions"></div>
+      </div>
+
+      <div class="box">
+        <h2>Ajustes</h2>
+        <div class="field"><span>Trocar de tela a cada (segundos)</span>
+          <span class="stepper"><button type="button" class="cfg" data-step="cfgInterval,-1" aria-label="Menos">−</button><input class="cfg" id="cfgInterval" type="number" min="2" max="120" value="6" inputmode="numeric" aria-label="Segundos por tela"><button type="button" class="cfg" data-step="cfgInterval,1" aria-label="Mais">+</button></span></div>
+        <p class="hint">Sono e silêncio ficam na aba Horários.</p>
+        <p class="hint offline-only">Os ajustes ficam ativos quando a página é aberta pelo Wi-Fi do Ottobot.</p>
+      </div>
+
+      <div class="box">
+        <h2>Wi-Fi de casa</h2>
+        <p class="hint">Com o robô no Wi-Fi da sua casa, o celular continua com internet: é só abrir <b>http://ottobot.local</b> (ou o número que aparece aqui e no visor). Quando conectar, ele comemora, mostra "wi-fi conectado" com o endereço e depois a hora, que vem da internet. A rede Ottobot continua ligada como reserva.</p>
+        <p id="homeStatus">Não configurado.</p>
+        <div class="field"><label for="homeSsid">Rede</label><span class="row"><input class="cfg txt" id="homeSsid" autocomplete="off" placeholder="Nome da rede"><button class="btn sm cfg" id="scanBtn" type="button">Procurar redes</button></span></div>
+        <p class="hint" id="netHint" hidden></p>
+        <div class="nets" id="netList" role="group" aria-label="Redes encontradas"></div>
+        <div class="field"><label for="homePass">Senha</label><input class="cfg txt" id="homePass" type="password" autocomplete="off"></div>
+        <div class="btns"><button class="btn primary cfg" id="homeSave" type="button">Conectar</button><button class="btn cfg" id="homeForget" type="button">Esquecer</button></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="p-lab" role="tabpanel" aria-labelledby="tab-lab" hidden>
+    <div class="lab">
+      <div class="left">
+        <div class="module big">
+          <div class="pins" aria-hidden="true"><span>GND</span><span>VCC</span><span>SCL</span><span>SDA</span></div>
+          <div class="glass"><canvas id="labCanvas" width="128" height="64" role="img" aria-label="Display OLED 128×64 simulado"></canvas></div>
+          <div class="silk">SSD1306 · 128×64 · I²C 0x3C</div>
+        </div>
+        <div class="status">Estado: <span class="pill" id="mode">Acordado</span></div>
+        <div class="robot">
+          <button class="touch" id="touch" type="button">Toque<small>GPIO10 · toques rápidos como na aba Toques · segure = carinho</small></button>
+          <button class="act" id="shake" type="button">Chacoalhar<small>tonto, depois bravo</small></button>
+          <button class="act" id="sleepNow" type="button">Dormir agora<small>sem esperar</small></button>
+        </div>
+        <div class="opts">
+          <label class="tog"><input type="checkbox" id="sound" checked> Som</label>
+          <label class="tog"><input type="checkbox" id="auto"> Trocar de tela como o robô</label>
+          <label class="tog"><input type="checkbox" id="sleepOn" checked> Dormir após 2 min parado</label>
+          <label class="tog">Cor do OLED
+            <select id="color">
+              <option value="228,240,255">Branco</option>
+              <option value="90,200,255">Azul</option>
+              <option value="255,208,80">Amarelo</option>
+            </select>
+          </label>
+        </div>
+        <div class="serial"><div class="serial-h">MONITOR SERIAL · 115200</div><pre id="serial"></pre></div>
+        <div class="code">
+          <div class="code-h"><span id="codeTitle">Código desta tela</span><span class="btns"><button class="btn sm primary robot-only" id="labShow" type="button" hidden>Ver no robô</button><button class="btn sm" id="copy" type="button">Copiar</button></span></div>
+          <pre><code id="code"></code></pre>
+        </div>
+      </div>
+
+      <div class="panel">
+        <fieldset>
+          <legend>Humor</legend>
+          <div class="seg">
+            <label><input type="radio" name="mood" value="0">Padrão</label>
+            <label><input type="radio" name="mood" value="3">Feliz</label>
+            <label><input type="radio" name="mood" value="1">Cansado</label>
+            <label><input type="radio" name="mood" value="2">Bravo</label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>Olhar</legend>
+          <div class="dir-row">
+            <div class="dir" id="dir"></div>
+            <label class="tog"><input type="checkbox" id="idle"> Olhar em volta sozinho</label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>Modos</legend>
+          <div class="togs">
+            <label class="tog"><input type="checkbox" id="autoblink"> Piscar sozinho</label>
+            <label class="tog"><input type="checkbox" id="curious"> Curioso</label>
+            <label class="tog"><input type="checkbox" id="cyclops"> Ciclope</label>
+            <label class="tog"><input type="checkbox" id="sweat"> Suor</label>
+            <label class="tog"><input type="checkbox" id="sway"> Balançar</label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>Animação que repete</legend>
+          <select id="act" aria-label="Animação que repete"></select>
+          <label class="sl"><span>A cada</span><input type="range" id="every" min="300" max="5000" step="100"><output id="every-o"></output></label>
+        </fieldset>
+        <fieldset>
+          <legend>Efeito e música</legend>
+          <select id="fx" aria-label="Efeito"></select>
+          <select id="song" aria-label="Música"></select>
+        </fieldset>
+        <fieldset id="shape">
+          <legend>Formato (pixels)</legend>
+        </fieldset>
+        <fieldset>
+          <legend>Animações de uma vez</legend>
+          <div class="btns">
+            <button class="btn" type="button" data-once="5">Piscar</button>
+            <button class="btn" type="button" data-once="3">Piscadela esq.</button>
+            <button class="btn" type="button" data-once="4">Piscadela dir.</button>
+            <button class="btn" type="button" data-once="close">Fechar</button>
+            <button class="btn" type="button" data-once="open">Abrir</button>
+            <button class="btn" type="button" data-once="1">Confuso</button>
+            <button class="btn" type="button" data-once="2">Rir</button>
+          </div>
+        </fieldset>
+        <button class="btn" type="button" id="reset">Voltar ao padrão do Ottobot</button>
+      </div>
+    </div>
+  </section>
+
+  <p class="foot">Simulação: porta linha a linha de <code>FluxGarage_RoboEyes.h</code>, das rotinas de desenho e da fonte da Adafruit GFX e do <code>loop()</code> do sketch, com a mesma conta inteira, a cerca de 25 quadros por segundo. Cada tela é só uma linha de números (humor, formato, posição, animação, efeito, música): o robô guarda as que você ligar e toca elas.</p>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const DEFAULT=0,TIRED=1,ANGRY=2,HAPPY=3,CENTER=0,N=1,NE=2,E=3,SE=4,S=5,SW=6,W=7,NW=8;
+const MOOD_NAME=['DEFAULT','TIRED','ANGRY','HAPPY'];
+const POS_NAME=['DEFAULT','N','NE','E','SE','S','SW','W','NW'];
+const T0=performance.now(), millis=()=>Math.floor(performance.now()-T0);
+const idiv=(a,b)=>Math.trunc(a/b), rnd=n=>n>0?Math.floor(Math.random()*n):0, u8=v=>v&255;
+const $=s=>document.querySelector(s);
+// Adafruit GFX glcdfont, printable ASCII (5 bytes per glyph, from ' ' to '~')
+const FONT='000000000000005f00000007000700147f147f14242a7f2a12231308646236495620500008070300001c2241000041221c002a1c7f1c2a08083e080800807030000808080808000060600020100804023e5149453e00427f400072494949462141494d331814127f1027454545393c4a49493141211109073649494936464949291e0000140000004034000000081422411414141414004122140802015909063e415d594e7c1211127c7f494949363e414141227f4141413e7f494949417f090909013e414151737f0808087f00417f41002040413f017f081422417f404040407f021c027f7f0408107f3e4141413e7f090909063e4151215e7f09192946264949493203017f01033f4040403f1f2040201f3f4038403f631408146303047804036159494d43007f4141410204081020004141417f04020102044040404040000307080020545478407f284444383844444428384444287f385454541800087e090218a4a49c787f0804047800447d40002040403d007f1028440000417f40007c047804787c080404783844444438fc1824241818242418fc7c08040408485454542404043f44243c4040207c1c2040201c3c4030403c44281028444c9090907c4464544c440008364100000077000000413608000201020402';
+const glyph=ch=>{ let c=ch.charCodeAt(0); if(c<32||c>126) c=32; const i=(c-32)*10; return [0,1,2,3,4].map(k=>parseInt(FONT.substr(i+k*2,2),16)); };
+
+// Port of FluxGarage_RoboEyes v1.1.1 + Adafruit GFX primitives, integer math as in C++
+class RoboEyes{
+  constructor(){
+    this.buf=new Uint8Array(128*64); this.BG=0; this.MAIN=1;
+    this.screenWidth=128; this.screenHeight=64;
+    this.tired=0; this.angry=0; this.happy=0; this.curious=0; this.cyclops=0; this.eyeL_open=0; this.eyeR_open=0;
+    for(const s of ['L','R']){
+      this[`eye${s}widthDefault`]=36; this[`eye${s}heightDefault`]=36;
+      this[`eye${s}widthCurrent`]=36; this[`eye${s}heightCurrent`]=1;
+      this[`eye${s}widthNext`]=36; this[`eye${s}heightNext`]=36; this[`eye${s}heightOffset`]=0;
+      this[`eye${s}borderRadiusDefault`]=8; this[`eye${s}borderRadiusCurrent`]=8; this[`eye${s}borderRadiusNext`]=8;
+    }
+    // spaceBetweenDefault is declared later in the C++ class, so it is still 0 here
+    this.eyeLx=idiv(128-(36+0+36),2); this.eyeLy=idiv(64-36,2); this.eyeLxNext=this.eyeLx; this.eyeLyNext=this.eyeLy;
+    this.eyeRx=this.eyeLx+36; this.eyeRy=this.eyeLy; this.eyeRxNext=this.eyeRx; this.eyeRyNext=this.eyeRy;
+    this.eyelidsTiredHeight=0; this.eyelidsTiredHeightNext=0; this.eyelidsAngryHeight=0; this.eyelidsAngryHeightNext=0;
+    this.eyelidsHappyBottomOffset=0; this.eyelidsHappyBottomOffsetNext=0;
+    this.spaceBetweenDefault=10; this.spaceBetweenCurrent=10; this.spaceBetweenNext=10;
+    this.hFlicker=0; this.hFlickerAlternate=0; this.hFlickerAmplitude=2;
+    this.vFlicker=0; this.vFlickerAlternate=0; this.vFlickerAmplitude=10;
+    this.autoblinker=0; this.blinkInterval=1; this.blinkIntervalVariation=4; this.blinktimer=0;
+    this.idle=0; this.idleInterval=1; this.idleIntervalVariation=3; this.idleAnimationTimer=0;
+    this.confused=0; this.confusedAnimationTimer=0; this.confusedAnimationDuration=500; this.confusedToggle=1;
+    this.laugh=0; this.laughAnimationTimer=0; this.laughAnimationDuration=500; this.laughToggle=1;
+    this.sweat=0; this.sweatBorderradius=3;
+    this.drops=[0,1,2].map(()=>({xi:2,x:0,y:2,ymax:0,w:1,h:2}));
+  }
+  begin(w,h){ this.screenWidth=w; this.screenHeight=h; this.buf.fill(0); this.eyeLheightCurrent=1; this.eyeRheightCurrent=1; }
+  setWidth(l,r){ this.eyeLwidthNext=this.eyeLwidthDefault=u8(l); this.eyeRwidthNext=this.eyeRwidthDefault=u8(r); }
+  setHeight(l,r){ this.eyeLheightNext=this.eyeLheightDefault=u8(l); this.eyeRheightNext=this.eyeRheightDefault=u8(r); }
+  setBorderradius(l,r){ this.eyeLborderRadiusNext=this.eyeLborderRadiusDefault=u8(l); this.eyeRborderRadiusNext=this.eyeRborderRadiusDefault=u8(r); }
+  setSpacebetween(s){ this.spaceBetweenNext=this.spaceBetweenDefault=s; }
+  setMood(m){ this.tired=m===TIRED; this.angry=m===ANGRY; this.happy=m===HAPPY; }
+  setPosition(p){
+    const cx=this.getScreenConstraint_X(), cy=this.getScreenConstraint_Y();
+    const xy={[N]:[idiv(cx,2),0],[NE]:[cx,0],[E]:[cx,idiv(cy,2)],[SE]:[cx,cy],[S]:[idiv(cx,2),cy],[SW]:[0,cy],[W]:[0,idiv(cy,2)],[NW]:[0,0]}[p]||[idiv(cx,2),idiv(cy,2)];
+    [this.eyeLxNext,this.eyeLyNext]=xy;
+  }
+  setAutoblinker(a,i,v){ this.autoblinker=a; if(i!==undefined){ this.blinkInterval=i; this.blinkIntervalVariation=v; } }
+  setIdleMode(a,i,v){ this.idle=a; if(i!==undefined){ this.idleInterval=i; this.idleIntervalVariation=v; } }
+  setCuriosity(b){ this.curious=b; }
+  setCyclops(b){ this.cyclops=b; }
+  setHFlicker(b,a){ this.hFlicker=b; if(a!==undefined) this.hFlickerAmplitude=u8(a); }
+  setVFlicker(b,a){ this.vFlicker=b; if(a!==undefined) this.vFlickerAmplitude=u8(a); }
+  setSweat(b){ this.sweat=b; }
+  getScreenConstraint_X(){ return this.screenWidth-this.eyeLwidthCurrent-this.spaceBetweenCurrent-this.eyeRwidthCurrent; }
+  getScreenConstraint_Y(){ return this.screenHeight-this.eyeLheightDefault; }
+  close(l=true,r=true){ if(l){ this.eyeLheightNext=1; this.eyeL_open=0; } if(r){ this.eyeRheightNext=1; this.eyeR_open=0; } }
+  open(l=true,r=true){ if(l) this.eyeL_open=1; if(r) this.eyeR_open=1; }
+  blink(l=true,r=true){ this.close(l,r); this.open(l,r); }
+  anim_confused(){ this.confused=1; }
+  anim_laugh(){ this.laugh=1; }
+
+  // Adafruit GFX + SSD1306 clipping
+  px(x,y,c){ if(x>=0&&x<128&&y>=0&&y<64) this.buf[y*128+x]=c; }
+  vline(x,y,h,c){ if(x<0||x>=128) return; if(y<0){ h+=y; y=0; } if(y+h>64) h=64-y; for(let i=0;i<h;i++) this.buf[(y+i)*128+x]=c; }
+  hline(x,y,w,c){ if(y<0||y>=64) return; if(x<0){ w+=x; x=0; } if(x+w>128) w=128-x; for(let i=0;i<w;i++) this.buf[y*128+x+i]=c; }
+  fillRect(x,y,w,h,c){ for(let i=x;i<x+w;i++) this.vline(i,y,h,c); }
+  circ(x0,y0,r,corners,delta,c){
+    let f=1-r, ddx=1, ddy=-2*r, x=0, y=r, px=x, py=y;
+    delta++;
+    while(x<y){
+      if(f>=0){ y--; ddy+=2; f+=ddy; }
+      x++; ddx+=2; f+=ddx;
+      if(x<y+1){ if(corners&1) this.vline(x0+x,y0-y,2*y+delta,c); if(corners&2) this.vline(x0-x,y0-y,2*y+delta,c); }
+      if(y!==py){ if(corners&1) this.vline(x0+py,y0-px,2*px+delta,c); if(corners&2) this.vline(x0-py,y0-px,2*px+delta,c); py=y; }
+      px=x;
+    }
+  }
+  fillCircle(x0,y0,r,c){ this.vline(x0,y0-r,2*r+1,c); this.circ(x0,y0,r,3,0,c); }
+  circleHelper(x0,y0,r,corner,c){
+    let f=1-r, ddx=1, ddy=-2*r, x=0, y=r;
+    while(x<y){
+      if(f>=0){ y--; ddy+=2; f+=ddy; }
+      x++; ddx+=2; f+=ddx;
+      if(corner&4){ this.px(x0+x,y0+y,c); this.px(x0+y,y0+x,c); }
+      if(corner&2){ this.px(x0+x,y0-y,c); this.px(x0+y,y0-x,c); }
+      if(corner&8){ this.px(x0-y,y0+x,c); this.px(x0-x,y0+y,c); }
+      if(corner&1){ this.px(x0-y,y0-x,c); this.px(x0-x,y0-y,c); }
+    }
+  }
+  drawRoundRect(x,y,w,h,r,c){
+    const max=idiv(Math.min(w,h),2); if(r>max) r=max;
+    this.hline(x+r,y,w-2*r,c); this.hline(x+r,y+h-1,w-2*r,c); this.vline(x,y+r,h-2*r,c); this.vline(x+w-1,y+r,h-2*r,c);
+    this.circleHelper(x+r,y+r,r,1,c); this.circleHelper(x+w-r-1,y+r,r,2,c); this.circleHelper(x+w-r-1,y+h-r-1,r,4,c); this.circleHelper(x+r,y+h-r-1,r,8,c);
+  }
+  fillRoundRect(x,y,w,h,r,c){
+    x=Math.trunc(x); y=Math.trunc(y); w=Math.trunc(w); h=Math.trunc(h);
+    const max=idiv(Math.min(w,h),2); if(r>max) r=max;
+    this.fillRect(x+r,y,w-2*r,h,c);
+    this.circ(x+w-r-1,y+r,r,1,h-2*r-1,c);
+    this.circ(x+r,y+r,r,2,h-2*r-1,c);
+  }
+  fillTriangle(x0,y0,x1,y1,x2,y2,c){
+    if(y0>y1){ [y0,y1]=[y1,y0]; [x0,x1]=[x1,x0]; }
+    if(y1>y2){ [y2,y1]=[y1,y2]; [x2,x1]=[x1,x2]; }
+    if(y0>y1){ [y0,y1]=[y1,y0]; [x0,x1]=[x1,x0]; }
+    if(y0===y2){ let a=x0,b=x0; if(x1<a) a=x1; else if(x1>b) b=x1; if(x2<a) a=x2; else if(x2>b) b=x2; this.hline(a,y0,b-a+1,c); return; }
+    const dx01=x1-x0,dy01=y1-y0,dx02=x2-x0,dy02=y2-y0,dx12=x2-x1,dy12=y2-y1;
+    let sa=0,sb=0,y,a,b; const last=y1===y2?y1:y1-1;
+    for(y=y0;y<=last;y++){ a=x0+idiv(sa,dy01); b=x0+idiv(sb,dy02); sa+=dx01; sb+=dx02; if(a>b)[a,b]=[b,a]; this.hline(a,y,b-a+1,c); }
+    sa=dx12*(y-y1); sb=dx02*(y-y0);
+    for(;y<=y2;y++){ a=x1+idiv(sa,dy12); b=x0+idiv(sb,dy02); sa+=dx12; sb+=dx02; if(a>b)[a,b]=[b,a]; this.hline(a,y,b-a+1,c); }
+  }
+  drawLine(x0,y0,x1,y1,c){
+    if(x0===x1){ if(y0>y1)[y0,y1]=[y1,y0]; this.vline(x0,y0,y1-y0+1,c); return; }
+    if(y0===y1){ if(x0>x1)[x0,x1]=[x1,x0]; this.hline(x0,y0,x1-x0+1,c); return; }
+    const steep=Math.abs(y1-y0)>Math.abs(x1-x0);
+    if(steep){ [x0,y0]=[y0,x0]; [x1,y1]=[y1,x1]; }
+    if(x0>x1){ [x0,x1]=[x1,x0]; [y0,y1]=[y1,y0]; }
+    const dx=x1-x0, dy=Math.abs(y1-y0), ystep=y0<y1?1:-1; let err=idiv(dx,2);
+    for(;x0<=x1;x0++){ if(steep) this.px(y0,x0,c); else this.px(x0,y0,c); err-=dy; if(err<0){ y0+=ystep; err+=dx; } }
+  }
+  drawBitmap(x,y,bmp,w,h){
+    for(let j=0;j<h;j++){ let b=0; for(let i=0;i<w;i++){ if(i&7) b<<=1; else b=bmp[j*((w+7)>>3)+(i>>3)]; if(b&0x80) this.px(x+i,y+j,1); } }
+  }
+  drawChar(x,y,ch,size){
+    const g=glyph(ch);
+    for(let i=0;i<5;i++){ let line=g[i]; for(let j=0;j<8;j++,line>>=1) if(line&1){ if(size===1) this.px(x+i,y+j,1); else this.fillRect(x+i*size,y+j*size,size,size,1); } }
+  }
+  print(x,y,text,size){ [...text].forEach((ch,i)=>this.drawChar(x+i*6*size,y,ch,size)); }
+
+  drawEyes(){
+    const now=millis();
+    if(this.curious){
+      if(this.eyeLxNext<=10) this.eyeLheightOffset=8;
+      else if(this.eyeLxNext>=this.getScreenConstraint_X()-10&&this.cyclops) this.eyeLheightOffset=8;
+      else this.eyeLheightOffset=0;
+      this.eyeRheightOffset=this.eyeRxNext>=this.screenWidth-this.eyeRwidthCurrent-10?8:0;
+    } else { this.eyeLheightOffset=0; this.eyeRheightOffset=0; }
+    this.eyeLheightCurrent=idiv(this.eyeLheightCurrent+this.eyeLheightNext+this.eyeLheightOffset,2);
+    this.eyeLy+=idiv(this.eyeLheightDefault-this.eyeLheightCurrent,2);
+    this.eyeLy-=idiv(this.eyeLheightOffset,2);
+    this.eyeRheightCurrent=idiv(this.eyeRheightCurrent+this.eyeRheightNext+this.eyeRheightOffset,2);
+    this.eyeRy+=idiv(this.eyeRheightDefault-this.eyeRheightCurrent,2);
+    this.eyeRy-=idiv(this.eyeRheightOffset,2);
+    if(this.eyeL_open&&this.eyeLheightCurrent<=1+this.eyeLheightOffset) this.eyeLheightNext=this.eyeLheightDefault;
+    if(this.eyeR_open&&this.eyeRheightCurrent<=1+this.eyeRheightOffset) this.eyeRheightNext=this.eyeRheightDefault;
+    this.eyeLwidthCurrent=idiv(this.eyeLwidthCurrent+this.eyeLwidthNext,2);
+    this.eyeRwidthCurrent=idiv(this.eyeRwidthCurrent+this.eyeRwidthNext,2);
+    this.spaceBetweenCurrent=idiv(this.spaceBetweenCurrent+this.spaceBetweenNext,2);
+    this.eyeLx=idiv(this.eyeLx+this.eyeLxNext,2); this.eyeLy=idiv(this.eyeLy+this.eyeLyNext,2);
+    this.eyeRxNext=this.eyeLxNext+this.eyeLwidthCurrent+this.spaceBetweenCurrent; this.eyeRyNext=this.eyeLyNext;
+    this.eyeRx=idiv(this.eyeRx+this.eyeRxNext,2); this.eyeRy=idiv(this.eyeRy+this.eyeRyNext,2);
+    this.eyeLborderRadiusCurrent=u8(idiv(this.eyeLborderRadiusCurrent+this.eyeLborderRadiusNext,2));
+    this.eyeRborderRadiusCurrent=u8(idiv(this.eyeRborderRadiusCurrent+this.eyeRborderRadiusNext,2));
+
+    if(this.autoblinker&&now>=this.blinktimer){ this.blink(); this.blinktimer=now+this.blinkInterval*1000+rnd(this.blinkIntervalVariation)*1000; }
+    if(this.laugh){
+      if(this.laughToggle){ this.setVFlicker(1,5); this.laughAnimationTimer=now; this.laughToggle=0; }
+      else if(now>=this.laughAnimationTimer+this.laughAnimationDuration){ this.setVFlicker(0,0); this.laughToggle=1; this.laugh=0; }
+    }
+    if(this.confused){
+      if(this.confusedToggle){ this.setHFlicker(1,20); this.confusedAnimationTimer=now; this.confusedToggle=0; }
+      else if(now>=this.confusedAnimationTimer+this.confusedAnimationDuration){ this.setHFlicker(0,0); this.confusedToggle=1; this.confused=0; }
+    }
+    if(this.idle&&now>=this.idleAnimationTimer){
+      this.eyeLxNext=rnd(this.getScreenConstraint_X()); this.eyeLyNext=rnd(this.getScreenConstraint_Y());
+      this.idleAnimationTimer=now+this.idleInterval*1000+rnd(this.idleIntervalVariation)*1000;
+    }
+    if(this.hFlicker){ const a=this.hFlickerAlternate?this.hFlickerAmplitude:-this.hFlickerAmplitude; this.eyeLx+=a; this.eyeRx+=a; this.hFlickerAlternate=!this.hFlickerAlternate; }
+    if(this.vFlicker){ const a=this.vFlickerAlternate?this.vFlickerAmplitude:-this.vFlickerAmplitude; this.eyeLy+=a; this.eyeRy+=a; this.vFlickerAlternate=!this.vFlickerAlternate; }
+    if(this.cyclops){ this.eyeRwidthCurrent=0; this.eyeRheightCurrent=0; this.spaceBetweenCurrent=0; }
+
+    const lx=this.eyeLx,ly=this.eyeLy,rx=this.eyeRx,ry=this.eyeRy,lw=this.eyeLwidthCurrent,rw=this.eyeRwidthCurrent,BG=this.BG;
+    this.buf.fill(BG);
+    this.fillRoundRect(lx,ly,lw,this.eyeLheightCurrent,this.eyeLborderRadiusCurrent,this.MAIN);
+    if(!this.cyclops) this.fillRoundRect(rx,ry,rw,this.eyeRheightCurrent,this.eyeRborderRadiusCurrent,this.MAIN);
+
+    if(this.tired){ this.eyelidsTiredHeightNext=u8(idiv(this.eyeLheightCurrent,2)); this.eyelidsAngryHeightNext=0; } else this.eyelidsTiredHeightNext=0;
+    if(this.angry){ this.eyelidsAngryHeightNext=u8(idiv(this.eyeLheightCurrent,2)); this.eyelidsTiredHeightNext=0; } else this.eyelidsAngryHeightNext=0;
+    this.eyelidsHappyBottomOffsetNext=this.happy?u8(idiv(this.eyeLheightCurrent,2)):0;
+
+    const th=this.eyelidsTiredHeight=u8(idiv(this.eyelidsTiredHeight+this.eyelidsTiredHeightNext,2)), hw=idiv(lw,2);
+    if(!this.cyclops){
+      this.fillTriangle(lx,ly-1,lx+lw,ly-1,lx,ly+th-1,BG);
+      this.fillTriangle(rx,ry-1,rx+rw,ry-1,rx+rw,ry+th-1,BG);
+    } else {
+      this.fillTriangle(lx,ly-1,lx+hw,ly-1,lx,ly+th-1,BG);
+      this.fillTriangle(lx+hw,ly-1,lx+lw,ly-1,lx+lw,ly+th-1,BG);
+    }
+    const ah=this.eyelidsAngryHeight=u8(idiv(this.eyelidsAngryHeight+this.eyelidsAngryHeightNext,2));
+    if(!this.cyclops){
+      this.fillTriangle(lx,ly-1,lx+lw,ly-1,lx+lw,ly+ah-1,BG);
+      this.fillTriangle(rx,ry-1,rx+rw,ry-1,rx,ry+ah-1,BG);
+    } else {
+      this.fillTriangle(lx,ly-1,lx+hw,ly-1,lx+hw,ly+ah-1,BG);
+      this.fillTriangle(lx+hw,ly-1,lx+lw,ly-1,lx+hw,ly+ah-1,BG);
+    }
+    const hb=this.eyelidsHappyBottomOffset=u8(idiv(this.eyelidsHappyBottomOffset+this.eyelidsHappyBottomOffsetNext,2));
+    this.fillRoundRect(lx-1,ly+this.eyeLheightCurrent-hb+1,lw+2,this.eyeLheightDefault,this.eyeLborderRadiusCurrent,BG);
+    if(!this.cyclops) this.fillRoundRect(rx-1,ry+this.eyeRheightCurrent-hb+1,rw+2,this.eyeRheightDefault,this.eyeRborderRadiusCurrent,BG);
+
+    if(this.sweat){
+      const resetX=[()=>rnd(30),()=>rnd(this.screenWidth-60)+30,()=>this.screenWidth-30+rnd(30)];
+      this.drops.forEach((d,i)=>{
+        if(d.y<=d.ymax) d.y+=0.5; else { d.xi=resetX[i](); d.y=2; d.ymax=rnd(10)+10; d.w=1; d.h=2; }
+        if(d.y<=idiv(d.ymax,2)){ d.w+=0.5; d.h+=0.5; } else { d.w-=0.1; d.h-=0.5; }
+        d.x=Math.trunc(d.xi-d.w/2);
+        this.fillRoundRect(d.x,d.y,d.w,d.h,this.sweatBorderradius,this.MAIN);
+      });
+    }
+  }
+}
+
+// Screen = one RoboEyes on one canvas, drawn only while it is on screen
+let LIT=[228,240,255];
+class Screen{
+  constructor(canvas){ this.e=new RoboEyes(); this.e.begin(128,64); this.ctx=canvas.getContext('2d'); this.img=this.ctx.createImageData(128,64); this.visible=true; }
+  tick(){}
+  overlay(){}
+  step(now){
+    this.tick(now);
+    if(!this.visible) return;
+    this.e.drawEyes(); this.overlay(now);
+    const d=this.img.data,b=this.e.buf,[r,g,bl]=LIT;
+    for(let i=0,j=0;i<b.length;i++,j+=4){ const on=b[i]; d[j]=on?r:5; d[j+1]=on?g:7; d[j+2]=on?bl:11; d[j+3]=255; }
+    this.ctx.putImageData(this.img,0,0);
+  }
+}
+
+// A screen = numbers. Same fields the robot stores: "key,mood,flags,pos,hf,vf,wl,wr,hl,hr,radius,space,squint,act,every,fx,song"
+const ACT_LABEL=['Nenhuma','Confuso','Rir','Piscadela esquerda','Piscadela direita','Piscar','Olhar de um lado pro outro','8 direções','Dançar','Pular para qualquer lado'];
+const FX={NONE:0,LOVE:1,BLUSH:2,TEARS:3,NOTES:4,SPARKLE:5,BANG:6,QUESTION:7,ANGER:8,DIZZY:9,ZZZ:10,TWINKLE:11,HYPNO:12,SHY:13};
+const FX_LABEL=['Nenhum','Corações e bochechas','Bochechas','Lágrimas','Notas musicais','Brilhos','Exclamação !','Interrogação ?','Veia de raiva','Tonto (espirais)','Zzz','Estrelas nos cantos','Espiral nos olhos','Bochecha corada dos lados'];
+const SONG_LABEL=['Sem música','Brilha, brilha, estrelinha','Dança'];
+const BASE={mood:DEFAULT,pos:null,idle:true,autoblink:true,curious:false,cyclops:false,sweat:false,sway:false,hf:0,vf:0,wl:36,wr:36,hl:36,hr:36,r:8,space:10,squint:0,act:0,every:0,fx:0,song:0};
+function encode(key,d){
+  const f=(d.idle?1:0)|(d.autoblink?2:0)|(d.curious?4:0)|(d.cyclops?8:0)|(d.sweat?16:0)|(d.sway?32:0);
+  return [key,d.mood,f,d.pos??CENTER,d.hf,d.vf,d.wl,d.wr,d.hl,d.hr,d.r,d.space,d.squint,d.act,Math.round(d.every/100),d.fx,d.song].join(',');
+}
+const LOOP_CODE_9='eyes.setPosition(random(0, 9));  // um lado qualquer';
+const LOOP_CODE=['','eyes.anim_confused();','eyes.anim_laugh();','eyes.blink(true, false);','eyes.blink(false, true);','eyes.blink();','eyes.setPosition(W);  // depois E, alternando','eyes.setPosition(N);  // depois NE, E, SE, S, SW, W, NW','eyes.setPosition(W);  // depois E, pulando com anim_laugh()',LOOP_CODE_9];
+function code(st){
+  const L=['// O setup do Ottobot já liga piscar e olhar em volta'];
+  if(st.wl!==36||st.wr!==36) L.push(`eyes.setWidth(${st.wl}, ${st.wr});`);
+  if(st.hl!==36||st.hr!==36) L.push(`eyes.setHeight(${st.hl}, ${st.hr});`);
+  if(st.r!==8) L.push(`eyes.setBorderradius(${st.r}, ${st.r});`);
+  if(st.space!==10) L.push(`eyes.setSpacebetween(${st.space});`);
+  L.push(`eyes.setMood(${MOOD_NAME[st.mood]});`);
+  if(!st.autoblink) L.push('eyes.setAutoblinker(OFF);');
+  if(!st.idle) L.push('eyes.setIdleMode(OFF);', `eyes.setPosition(${POS_NAME[st.pos??CENTER]});`);
+  if(st.curious) L.push('eyes.setCuriosity(ON);');
+  if(st.cyclops) L.push('eyes.setCyclops(ON);');
+  if(st.sweat) L.push('eyes.setSweat(ON);');
+  if(st.hf) L.push(`eyes.setHFlicker(ON, ${st.hf});`);
+  if(st.vf) L.push(`eyes.setVFlicker(ON, ${st.vf});`);
+  if(st.squint) L.push(`eyes.eyeLheightNext = ${st.squint};  // olhos apertados`, `eyes.eyeRheightNext = ${st.squint};`);
+  if(st.sway) L.push('// balançando de lado: sway() no sketch');
+  if(st.fx) L.push(`// efeito: ${FX_LABEL[st.fx]} (drawOverlay() no sketch)`);
+  if(st.song) L.push(`// música: ${SONG_LABEL[st.song]} (playSong() no sketch); a tela fica até ela acabar`);
+  if(st.act) L.push('', st.every?`// repetir a cada ${st.every/1000} s:`:'// uma vez ao mostrar:', LOOP_CODE[st.act]);
+  L.push('', '// Esta tela como linha do rodízio do robô:', '// '+encode('minha_tela',st));
+  return L.join('\n');
+}
+
+// Buzzer sounds, same notes as the firmware
+const slide=(a,b,ms)=>{ const r=[]; for(let t=0;t<ms;t+=25) r.push([a+Math.trunc((b-a)*t/ms),25]); return r; };
+const withGap=(notes,gap)=>notes.flatMap(n=>[n,[0,gap]]);
+const JOY=withGap([[1047,90],[1319,90],[1568,90],[2093,180],[1568,90],[2093,350]],30);
+const PET=[...slide(1000,1400,400),...slide(1400,1150,500),[0,120],...slide(1150,1600,450),...slide(1600,950,900)];
+const PURR=Array.from({length:12},(_,i)=>[i%2?760:680,35]);
+const CHIRP=[[1800,60],[0,40],[2300,90]];
+const DZ=[1500,1000,1400,900,1250,800,1100,700], DIZZY=DZ.slice(0,-1).flatMap((h,i)=>slide(h,DZ[i+1],220));
+const GRR=withGap(Array.from({length:8},(_,i)=>[300+(i%2)*40,45]),15);
+const YAWN=[...slide(1300,1700,300),...slide(1700,800,1300)];
+const LULLABY=withGap([[659,250],[659,250],[784,600],[659,250],[659,250],[784,600],[659,250],[784,250],[1047,500],[988,400],[880,400],[880,300],[784,700]],40);
+const CHIME=withGap([[1319,250],[1047,400]],40), UH_OH=withGap([[784,200],[622,400]],40);
+const FANFARE=withGap([[784,120],[1047,120],[1319,120],[1568,300],[1319,120],[1568,500]],30);
+const BLIP=withGap([[2093,80],[2637,120]],30);
+const MORNING=withGap([[784,240],[659,240],[587,240],[523,240],[587,240],[659,240],[784,240],[659,240],[587,240],[523,240],[587,240],[659,240],[587,200],[659,200],[784,200],[659,200],[784,200],[880,200],[659,200],[880,200],[784,240],[659,240],[587,240],[523,600]],30);
+const CUCKOO=withGap([[1319,220],[1047,380],[1319,220],[1047,380],[1319,220],[1047,500]],80);
+const POWER_ON=slide(300,1500,600);
+const tw=(a,b)=>[[a,330],[a,330],[b,330],[b,330]];
+const TWINKLE=withGap([[1047,330],[1047,330],[1568,330],[1568,330],[1760,330],[1760,330],[1568,660],[1397,330],[1397,330],[1319,330],[1319,330],[1175,330],[1175,330],[1047,660],
+  ...tw(1568,1397),[1319,330],[1319,330],[1175,660],...tw(1568,1397),[1319,330],[1319,330],[1175,660],
+  [1047,330],[1047,330],[1568,330],[1568,330],[1760,330],[1760,330],[1568,660],[1397,330],[1397,330],[1319,330],[1319,330],[1175,330],[1175,330],[1047,660]],40);
+const GROOVE=[1047,1319,1568,1760,1568,1319];
+const DANCE=withGap([...GROOVE,...GROOVE,1397,1760,2093,2349,2093,1760,...GROOVE].map(h=>[h,150]).concat([[1568,300],[2093,400]]),30);
+const SONGS=[null,TWINKLE,DANCE];
+const lengthOf=steps=>steps.reduce((a,[,ms])=>a+ms,0);
+let ac=null, osc=null;
+function unlockAudio(){ try{ ac=ac||new (window.AudioContext||window.webkitAudioContext)(); ac.resume(); }catch{} }
+function soundOn(){ return $('#sound').checked; }
+function stopBeep(){ if(osc){ try{ osc.stop(); }catch{} osc=null; } }
+function beep(steps){
+  if(!soundOn()) return;
+  unlockAudio(); if(!ac) return;
+  stopBeep();
+  const o=ac.createOscillator(), g=ac.createGain(); o.type='square'; o.connect(g); g.connect(ac.destination);
+  let t=ac.currentTime+0.02; g.gain.setValueAtTime(0,ac.currentTime);
+  for(const [hz,ms] of steps){ if(hz){ o.frequency.setValueAtTime(hz,t); g.gain.setValueAtTime(0.045,t); } else g.gain.setValueAtTime(0,t); t+=ms/1000; }
+  g.gain.setValueAtTime(0,t); o.start(); o.stop(t+0.05); osc=o;
+}
+
+// Port of the sketch's loop(): modes, screen player, slow eyelids, overlay effects, clock
+const M={AWAKE:0,PETTED:1,AFTERGLOW:2,DIZZY:3,ANGRY:4,SLEEPY:5,SLEEPING:6,CLOCK:7,CHEER:8,QR:9,SCENE:10,BOOT:11};
+const MODE_LABEL=['Acordado','Ganhando carinho','Curtindo o carinho','Tonto','Bravo','Sonolento','Dormindo','Mostrando a hora','Comemorando o Wi-Fi','Mostrando o QR code','Cena do dia','Abertura','Alarme tocando','Jogando reflexo','Dançando com a música','Jogando','Mostrando o clima','Focando (pomodoro)','Mostrando um cartão'];
+const TM={HOLD:700,TAP_GAP:400,AFTERGLOW:4000,PURR:2500,DIZZY:2000,ANGRY:3000,SWEAT:5000,SLEEPY:8000,TRIPLE:700,LULLABY:5500,CLOCK:6000,CHEER:2000,WIFI_OK:6000,CHEER_END:11000,QR:30000,SCENE:15000,BOOT_TV:700,BOOT_DROP:150,BOOT_WAVE:1900,BOOT_WIPE:3300,BOOT:3800};
+const SCENE={SUNRISE:0,NOON:1,NIGHT:2};
+const EYE_SIZE=36,EYE_R=8,EYE_SPACE=10,PET_H=12,PET_R=18,SLEEPY_H=18,SLEEP_H=2;
+const P={HEART_BIG:0,HEART_SMALL:1,ZED:2,NOTE:3,TEAR:4,SPARK:5};
+const HEART_BIG=[0x6C,0xFE,0xFE,0x7C,0x38,0x10], HEART_SMALL=[0x50,0xF8,0xF8,0x70,0x20];
+const NOTE_BMP=[0x1C,0x12,0x10,0x10,0x70,0xF0,0xF0,0x60], TEAR_BMP=[0x40,0xE0,0xE0,0x40];
+const ANGER_BMP=[0x22,0x00,0x22,0x00,0xE3,0x80,0,0,0,0,0,0,0xE3,0x80,0x22,0x00,0x22,0x00];
+const DAYS=['dom','seg','ter','qua','qui','sex','sab'];
+const pad2=n=>String(n).padStart(2,'0');
+class Ottobot extends Screen{
+  constructor(canvas,opt={}){
+    super(canvas);
+    this.sound=!!opt.sound; this.log=opt.log||(()=>{});
+    this.mode=M.AWAKE; this.since=0; this.lastActivity=millis(); this.lastEmotion=millis(); this.lastSweat=0; this.lastPurr=0; this.sweating=false;
+    this.touched=false; this.was=false; this.touchStart=0; this.touchUsed=false; this.taps=0; this.lastTapUp=0;
+    this.sleepTaps=0; this.lastSleepTap=-1e9; this.lullabyStart=-1e9; this.shaken=false;
+    this.list=[]; this.index=-1; this.shown=null; this.screenStep=0; this.lastScreenStep=0; this.songStart=0; this.songLen=0;
+    this.tapMap={}; this.clockKnown=true;
+    this.lid=0; this.lidTarget=0; this.parts=[]; this.lastSpawn=0;
+    this.autoMood=true; this.interval=6000; this.sleepAfter=120000; this.dirty=false;
+    this.e.setAutoblinker(1,3,1); this.e.setIdleMode(1,2,1); this.e.setMood(DEFAULT);
+  }
+  play(steps){ if(this.sound){ beep(steps); return soundOn()?lengthOf(steps):0; } return 0; }
+  setMode(m){ this.mode=m; this.since=millis(); this.dirty=true; }
+  baseLook(){
+    const e=this.e; this.shown=null; this.screenStep=0;
+    if(this.songLen){ this.songLen=0; if(this.sound) stopBeep(); }
+    e.setWidth(EYE_SIZE,EYE_SIZE); e.setHeight(EYE_SIZE,EYE_SIZE); e.setBorderradius(EYE_R,EYE_R); e.setSpacebetween(EYE_SPACE);
+    e.setMood(DEFAULT); e.setAutoblinker(1,3,1); e.setIdleMode(1,2,1); e.setCuriosity(0); e.setCyclops(0); e.setHFlicker(0,0); e.setVFlicker(0,0);
+    if(!this.sweating) e.setSweat(0);
+    if(this.lid) this.moveLidsTo(EYE_SIZE);
+  }
+  happyLook(){ this.baseLook(); this.e.setMood(HAPPY); }
+  moveLidsTo(t){ if(!this.lid) this.lid=Math.max(this.e.eyeLheightCurrent,1); this.lidTarget=t; }
+  updateLids(){
+    if(!this.lid) return; const e=this.e;
+    this.lid+=Math.sign(this.lidTarget-this.lid); e.eyeLheightNext=e.eyeRheightNext=this.lid;
+    if(this.lid===this.lidTarget&&this.lidTarget===e.eyeLheightDefault){ this.lid=0; e.eyeRheightNext=e.eyeRheightDefault; }
+  }
+  setRandomMood(){
+    if(!this.list.length){ this.baseLook(); return; }
+    let i=rnd(this.list.length); if(this.list.length>1&&i===this.index) i=(i+1)%this.list.length;
+    this.index=i; this.showDef(this.list[i].s,this.list[i].key);
+  }
+  showDef(d,key){
+    d={...BASE,...d}; const e=this.e;
+    this.baseLook(); this.shown={...d,key}; this.screenStep=0; this.dirty=true;
+    e.setWidth(d.wl,d.wr); e.setHeight(d.hl,d.hr); e.setBorderradius(d.r,d.r); e.setSpacebetween(d.space);
+    e.setMood(d.mood); e.setAutoblinker(d.autoblink,3,1); e.setIdleMode(d.idle,2,1); e.setCuriosity(d.curious); e.setCyclops(d.cyclops);
+    if(d.sweat) e.setSweat(1);
+    e.setHFlicker(d.hf>0,d.hf); e.setVFlicker(d.vf>0,d.vf);
+    if(!d.idle) e.setPosition(d.pos??CENTER);
+    if(d.squint) this.moveLidsTo(d.squint); else if(this.lid) this.moveLidsTo(d.hl);
+    this.songStart=millis(); this.songLen=d.song?this.play(SONGS[d.song]):0;
+    this.log('New emotion: '+key);
+  }
+  // Static design from the lab panel
+  design(d){ this.setMode(M.AWAKE); this.parts=[]; this.showDef(d,'lab'); this.lastActivity=this.lastEmotion=millis(); }
+  stepScreen(now){
+    const d=this.shown; if(!d) return;
+    if(d.sway) this.sway(now);
+    if(!d.act) return;
+    if(this.screenStep&&(!d.every||now-this.lastScreenStep<Math.round(d.every/100)*100)) return;
+    this.doAct(d.act); this.lastScreenStep=now;
+  }
+  doAct(a){
+    const e=this.e, D=[N,NE,E,SE,S,SW,W,NW];
+    if(a===1) e.anim_confused(); else if(a===2) e.anim_laugh(); else if(a===3) e.blink(true,false); else if(a===4) e.blink(false,true); else if(a===5) e.blink();
+    else if(a===6) e.setPosition(this.screenStep%2?E:W); else if(a===7) e.setPosition(D[this.screenStep%8]);
+    else if(a===8){ e.setPosition(this.screenStep%2?E:W); if(this.screenStep%2===0) e.anim_laugh(); }
+    else if(a===9) e.setPosition(rnd(9));
+    this.screenStep++;
+  }
+  tap(){ this.log('Tap! So happy 😊'); this.setMode(M.AWAKE); this.happyLook(); this.e.anim_laugh(); this.play(JOY); this.lastEmotion=millis(); }
+  // n quick taps: the action set for n, or for the nearest smaller count that has one
+  onTaps(n){ for(let k=Math.min(n,8);k>=1;k--){ const a=this.tapMap[k]; if(!a) continue; this.log(k+' taps!'); this.doTapAction(a); return; } }
+  doTapAction(a){
+    if(a.act==='joy') this.tap();
+    else if(a.act==='screen'){ this.setMode(M.AWAKE); this.showDef(a.s,a.key); this.lastEmotion=millis(); }
+    else if(a.act==='clock') this.showClock();
+    else if(a.act==='pet'){ this.startPet(); this.setMode(M.AFTERGLOW); }
+    else if(a.act==='sleep') this.getSleepy();
+    else if(a.act==='shake') this.startDizzy();
+    else if(a.act==='cheer') this.cheer();
+    else if(a.act==='qr') this.showQr();
+    else if(a.act==='sunrise') this.showScene(SCENE.SUNRISE);
+    else if(a.act==='noon') this.showScene(SCENE.NOON);
+    else if(a.act==='night') this.showScene(SCENE.NIGHT);
+    else if(['joke','game','simon','guess','rps','dino','lander','target','timer','snake','dice','slots','weather','focus','mood','water','countdown','video'].includes(a.act)) this.tap();  // the lab only laughs  // the lab only laughs; the robot tells a whole joke (startJoke)
+  }
+  showScene(kind){
+    this.log(['Good morning! 🌅','Noon! 🌞','Good night! 🌙'][kind]); this.sceneKind=kind; this.setMode(M.SCENE); this.baseLook(); this.parts=[];
+    this.play(kind===SCENE.SUNRISE?MORNING:kind===SCENE.NOON?CUCKOO:LULLABY);
+  }
+  startBoot(){ this.log("Hello, I'm Ottobot! 🤖"); this.setMode(M.BOOT); this.bootLetters=0; this.play(POWER_ON); }
+  showQr(){ this.log('Scan me! 📷'); this.setMode(M.QR); this.baseLook(); this.parts=[]; this.play(BLIP); }
+  startPet(){
+    const e=this.e; this.log('Petting... 🥰'); this.taps=0; this.setMode(M.PETTED); this.lastPurr=millis();
+    this.baseLook(); e.setAutoblinker(0); e.setIdleMode(0); e.setMood(HAPPY); e.setPosition(CENTER); e.setBorderradius(PET_R,PET_R);
+    this.moveLidsTo(PET_H); this.play(PET);
+  }
+  showClock(){ this.log(this.clockKnown?'What time is it? 🕒':'No WiFi, no clock 📵'); this.setMode(M.CLOCK); this.baseLook(); this.parts=[]; this.play(this.clockKnown?CHIME:UH_OH); }
+  cheer(){ this.log('WiFi connected! Yay! 🎉'); this.setMode(M.CHEER); this.happyLook(); this.e.setIdleMode(0); this.e.setPosition(CENTER); this.lastScreenStep=-1e9; this.play(FANFARE); }
+  sway(now){ const e=this.e; e.eyeLxNext=Math.trunc(idiv(e.getScreenConstraint_X(),2)+4*Math.sin(now/600)); }
+  wakeUp(){ this.setMode(M.AWAKE); this.happyLook(); this.play(CHIRP); this.lastEmotion=this.lastActivity=millis(); }
+  startDizzy(){
+    this.log(this.mode===M.SLEEPY||this.mode===M.SLEEPING?'Woken up by a shake! So dizzy... 😵':'Shake detected! So dizzy... 😵');
+    this.setMode(M.DIZZY); this.lastActivity=millis(); this.parts=[]; this.baseLook(); this.play(DIZZY);
+  }
+  startAngry(){ const e=this.e; this.log('Getting angry... 😠'); this.setMode(M.ANGRY); e.setMood(ANGRY); e.setSweat(1); this.sweating=true; this.lastSweat=millis(); this.play(GRR); }
+  getSleepy(){
+    const e=this.e; this.log('Getting sleepy... 🥱'); this.setMode(M.SLEEPY);
+    this.baseLook(); e.setAutoblinker(0); e.setIdleMode(0); e.setMood(TIRED); e.setPosition(CENTER); this.moveLidsTo(SLEEPY_H); this.play(YAWN);
+  }
+  fallAsleep(){ this.log('Sleeping... 💤'); this.setMode(M.SLEEPING); this.e.setPosition(S); this.moveLidsTo(SLEEP_H); }
+  sleepTouch(now){
+    this.sleepTaps=now-this.lastSleepTap<TM.TRIPLE?this.sleepTaps+1:1; this.lastSleepTap=now;
+    if(this.sleepTaps>=3){ this.log('Good morning! ☀️'); this.sleepTaps=0; this.wakeUp(); }
+    else { this.log('Shh... lullaby 🎵'); this.lullabyStart=now; this.play(LULLABY); }
+  }
+  handleTouch(now){
+    const t=this.touched;
+    if(t&&!this.was){
+      this.touchStart=now; this.lastActivity=now; const closes=this.mode===M.QR||this.mode===M.SCENE||this.mode===M.BOOT; this.touchUsed=closes||this.mode===M.SLEEPY||this.mode===M.SLEEPING;
+      if(closes){ this.setMode(M.AWAKE); this.happyLook(); this.lastEmotion=now; }  // a touch closes the QR code, a day scene or the intro
+      else if(this.touchUsed) this.sleepTouch(now);
+      else if(this.mode===M.DIZZY||this.mode===M.ANGRY){ this.e.setSweat(0); this.sweating=false; this.setMode(M.AWAKE); this.baseLook(); }
+    }
+    if(t&&(this.mode===M.AWAKE||this.mode===M.AFTERGLOW)&&now-this.touchStart>=TM.HOLD) this.startPet();
+    if(!t&&this.was){
+      if(this.mode===M.PETTED) this.setMode(M.AFTERGLOW);
+      else if(this.mode===M.CLOCK) this.since=now;
+      else if(now-this.touchStart<TM.HOLD&&!this.touchUsed){ this.taps++; this.lastTapUp=now; }
+    }
+    this.was=t;
+    if(this.taps&&!t&&now-this.lastTapUp>TM.TAP_GAP){  // no more taps coming: act on how many there were
+      const n=this.taps; this.taps=0;
+      if(this.mode===M.AWAKE||this.mode===M.AFTERGLOW) this.onTaps(n);
+    }
+  }
+  tick(now){
+    const e=this.e, shaken=this.shaken; this.shaken=false;
+    this.handleTouch(now);
+    if(shaken&&this.mode!==M.PETTED&&this.mode!==M.DIZZY&&this.mode!==M.ANGRY) this.startDizzy();
+    if(this.sweating&&now-this.lastSweat>TM.SWEAT){ e.setSweat(0); this.sweating=false; this.log('Stopped sweating'); this.dirty=true; }
+    switch(this.mode){
+      case M.AWAKE:
+        this.stepScreen(now);
+        if(this.autoMood&&now-this.lastEmotion>this.interval&&now-this.songStart>=this.songLen){ this.lastEmotion=now; this.setRandomMood(); }
+        if(this.sleepAfter&&now-this.lastActivity>this.sleepAfter) this.getSleepy();
+        break;
+      case M.PETTED: this.sway(now); if(now-this.lastPurr>TM.PURR){ this.play(PURR); this.lastPurr=now; } break;
+      case M.AFTERGLOW: this.sway(now); if(now-this.since>TM.AFTERGLOW) this.wakeUp(); break;
+      case M.DIZZY: if(now-this.since>TM.DIZZY) this.startAngry(); break;
+      case M.ANGRY: if(now-this.since>TM.ANGRY){ this.log('Calming down... 😌'); this.setMode(M.AWAKE); this.lastEmotion=now; this.setRandomMood(); } break;
+      case M.SLEEPY: if(now-this.since>TM.SLEEPY) this.fallAsleep(); break;
+      case M.CLOCK: if(!this.was&&now-this.since>TM.CLOCK) this.wakeUp(); break;
+      case M.QR: if(now-this.since>TM.QR){ this.setMode(M.AWAKE); this.happyLook(); this.lastEmotion=now; } break;
+      case M.SCENE: if(now-this.since>TM.SCENE){ if(this.sceneKind===SCENE.NIGHT) this.getSleepy(); else this.wakeUp(); } break;
+      case M.BOOT: {
+        const t=now-this.since, letters=t<TM.BOOT_TV?0:Math.min(7,idiv(t-TM.BOOT_TV,TM.BOOT_DROP)+1);
+        if(letters!==this.bootLetters){ this.bootLetters=letters; if(letters) this.play([[1400+letters*120,60]]); }
+        if(t>TM.BOOT){ this.setMode(M.AWAKE); this.happyLook(); e.eyeLheightCurrent=e.eyeRheightCurrent=1; this.play(JOY); this.lastEmotion=this.lastActivity=now; }
+        break;
+      }
+      case M.CHEER:
+        if(now-this.since<TM.CHEER&&now-this.lastScreenStep>500){ e.anim_laugh(); this.lastScreenStep=now; }
+        if(now-this.since>(this.clockKnown?TM.CHEER_END:TM.WIFI_OK)){ this.setMode(M.AWAKE); this.happyLook(); this.lastEmotion=now; }
+        break;
+    }
+    this.updateLids();
+  }
+  fxNow(now){
+    const asleep=this.mode===M.SLEEPY||this.mode===M.SLEEPING;
+    if(this.mode===M.CHEER) return FX.SPARKLE;
+    if(this.mode===M.PETTED||this.mode===M.AFTERGLOW) return FX.LOVE;
+    if(asleep&&now-this.lullabyStart<TM.LULLABY) return FX.NOTES;
+    if(this.mode===M.SLEEPING) return FX.ZZZ;
+    if(this.mode===M.DIZZY) return FX.DIZZY;
+    if(this.mode===M.AWAKE&&this.shown) return this.shown.fx;
+    return FX.NONE;
+  }
+  overlay(now){
+    const e=this.e;
+    if(this.mode===M.QR){ this.drawQr(); return; }
+    if(this.mode===M.SCENE){ this.drawScene(now); return; }
+    if(this.mode===M.BOOT){ this.drawBoot(now); return; }
+    if(this.mode===M.CLOCK){ if(this.clockKnown) this.drawClock(); else this.drawNoWifi(now); return; }
+    if(this.mode===M.CHEER&&now-this.since>=TM.CHEER){ if(now-this.since<TM.WIFI_OK||!this.clockKnown) this.drawWifiOk(); else this.drawClock(); return; }
+    const fx=this.fxNow(now);
+    if(fx===FX.DIZZY){ this.drawDizzy(now); return; }
+    const hearts=fx===FX.LOVE&&!(this.mode===M.AFTERGLOW&&now-this.since>=TM.AFTERGLOW/2);
+    if(hearts&&now-this.lastSpawn>450){ this.spawn(rnd(110)+6,22,rnd(2)?P.HEART_BIG:P.HEART_SMALL); this.lastSpawn=now; }
+    else if(fx===FX.ZZZ&&now-this.lastSpawn>1400){ this.spawn(86,34,P.ZED); this.lastSpawn=now; }
+    else if(fx===FX.NOTES&&now-this.lastSpawn>700){ this.spawn(rnd(2)?rnd(16)+2:rnd(14)+104,44,P.NOTE); this.lastSpawn=now; }
+    else if(fx===FX.TEARS&&now-this.lastSpawn>450){ const x=rnd(2)?e.eyeLx+idiv(e.eyeLwidthCurrent,2):e.eyeRx+idiv(e.eyeRwidthCurrent,2); this.spawn(x-1,e.eyeLy+e.eyeLheightCurrent-2,P.TEAR); this.lastSpawn=now; }
+    else if(fx===FX.SPARKLE&&now-this.lastSpawn>220){ this.spawn(rnd(124)+2,rnd(60)+2,P.SPARK); this.lastSpawn=now; }
+    for(const p of this.parts){
+      if(!p.alive) continue;
+      p.age++;
+      if(p.kind===P.ZED){ p.y-=0.35; p.x+=0.25; } else if(p.kind===P.TEAR){ p.y+=p.phase; p.phase+=0.15; } else if(p.kind===P.NOTE) p.y-=0.5; else if(p.kind!==P.SPARK) p.y-=0.7;
+      if(p.y<-14||p.y>64||(p.kind===P.SPARK&&p.age>14)){ p.alive=false; continue; }
+      const y=Math.trunc(p.y);
+      if(p.kind<=P.HEART_SMALL){ const x=Math.trunc(p.x+3*Math.sin(p.y/5+p.phase)); if(p.kind===P.HEART_BIG) e.drawBitmap(x,y,HEART_BIG,7,6); else e.drawBitmap(x,y,HEART_SMALL,5,5); }
+      else if(p.kind===P.NOTE) e.drawBitmap(Math.trunc(p.x+4*Math.sin(p.y/6+p.phase)),y,NOTE_BMP,7,8);
+      else if(p.kind===P.TEAR) e.drawBitmap(Math.trunc(p.x),y,TEAR_BMP,3,4);
+      else if(p.kind===P.SPARK){ const x=Math.trunc(p.x), s=idiv(p.age<7?p.age:14-p.age,3)+1; e.drawLine(x-s,y,x+s,y,1); e.drawLine(x,y-s,x,y+s,1); }
+      else { const big=p.y<18; e.drawChar(Math.trunc(p.x),y,big?'Z':'z',big?2:1); }
+    }
+    if(fx===FX.LOVE||fx===FX.BLUSH){ const y=e.eyeLy+e.eyeLheightCurrent+4; this.blush(e.eyeLx+idiv(e.eyeLwidthCurrent,2)-7,y); if(!e.cyclops) this.blush(e.eyeRx+idiv(e.eyeRwidthCurrent,2)-7,y); }
+    if(fx===FX.TWINKLE) [[6,6],[121,6],[6,47],[121,47]].forEach(([x,y],i)=>{ let s=(idiv(now,110)+i*5)%10; s=s<5?s:9-s; if(s<1) return; e.drawLine(x-s,y,x+s,y,1); e.drawLine(x,y-s,x,y+s,1); });
+    if(fx===FX.HYPNO) for(const r of [0,1]){
+      const w=r?e.eyeRwidthCurrent:e.eyeLwidthCurrent, hh=r?e.eyeRheightCurrent:e.eyeLheightCurrent, cx=(r?e.eyeRx:e.eyeLx)+idiv(w,2), cy=e.eyeLy+idiv(hh,2), maxR=Math.min(w,hh)/2-2, spin=now/140*(r?-1:1);
+      let px=cx, py=cy; for(let a=0.3;a<4*Math.PI;a+=0.3){ const rr=a*maxR/(4*Math.PI), x=Math.trunc(cx+rr*Math.cos(a+spin)), y=Math.trunc(cy+rr*Math.sin(a+spin)); e.drawLine(px,py,x,y,0); e.drawLine(px+1,py,x+1,y,0); px=x; py=y; }
+    }
+    if(fx===FX.SHY){ const y=e.eyeLy+idiv(e.eyeLheightCurrent,3), xl=e.eyeLx-12, xr=e.eyeRx+e.eyeRwidthCurrent+3; for(let k=0;k<3;k++){ e.drawLine(xl+k*3,y+3,xl+k*3+3,y-2,1); e.drawLine(xr+k*3,y+3,xr+k*3+3,y-2,1); } }
+    if((fx===FX.BANG&&idiv(now,220)%5!==4)||fx===FX.QUESTION) e.drawChar(114,Math.trunc(2+2*Math.sin(now/200)),fx===FX.BANG?'!':'?',2);
+    if(fx===FX.ANGER&&Math.floor(now/300)%2) e.drawBitmap(4,3,ANGER_BMP,9,9);
+  }
+  spawn(x,y,kind){ this.parts=this.parts.filter(p=>p.alive); if(this.parts.length<10) this.parts.push({x,y,phase:kind===P.TEAR?0.5:rnd(628)/100,kind,age:0,alive:true}); }
+  blush(x,y){ for(let i=0;i<3;i++) this.e.drawLine(x+i*5,y+3,x+i*5+3,y,1); }
+  drawDizzy(now){
+    const e=this.e; e.buf.fill(0);
+    const spin=now/90, wob=Math.trunc(4*Math.sin(now/150));
+    for(const side of [-1,1]){
+      const cx=64+side*26+wob, cy=34; let px=cx, py=cy;
+      for(let a=0.3;a<4*Math.PI;a+=0.3){ const r=a*1.1, x=Math.trunc(cx+r*Math.cos(a+spin)), y=Math.trunc(cy+r*Math.sin(a+spin)*0.85); e.drawLine(px,py,x,y,1); px=x; py=y; }
+    }
+    for(let i=0;i<3;i++){ const a=now/300+i*2.094, x=Math.trunc(64+44*Math.cos(a)), y=Math.trunc(8+4*Math.sin(a)); e.drawLine(x-2,y,x+2,y,1); e.drawLine(x,y-2,x,y+2,1); }
+  }
+  drawClock(){
+    const e=this.e, d=new Date(); e.buf.fill(0);
+    const hhmm=pad2(d.getHours())+(d.getSeconds()%2?' ':':')+pad2(d.getMinutes());
+    const date=`${DAYS[d.getDay()]} ${pad2(d.getDate())}/${pad2(d.getMonth()+1)}/${d.getFullYear()}`;
+    e.print(4,8,hhmm,4); e.print(idiv(128-date.length*6,2),50,date,1);
+  }
+  drawScene(now){
+    const e=this.e, t=now-this.since; e.buf.fill(0);
+    if(this.sceneKind===SCENE.NIGHT){
+      e.fillCircle(40,26,15,1); e.fillCircle(47,21,13,0);
+      [[70,8],[92,18],[112,6],[84,34],[118,30],[14,10],[102,44],[66,26]].forEach(([x,y],i)=>{ const s=(idiv(t,300)+i*3)%6<3?2:1; e.drawLine(x-s,y,x+s,y,1); e.drawLine(x,y-s,x,y+s,1); });
+      e.print(70,49,'boa noite',1); return;
+    }
+    const noon=this.sceneKind===SCENE.NOON, cy=noon?22:47-idiv(Math.min(t,3000)*18,3000), r=11, spin=t/1500;
+    for(let i=0;i<12;i++){
+      const a=spin+i*Math.PI/6, len=noon?Math.trunc(6+2*Math.sin(t/200+i)):6;
+      e.drawLine(Math.trunc(64+(r+3)*Math.cos(a)),Math.trunc(cy+(r+3)*Math.sin(a)),Math.trunc(64+(r+3+len)*Math.cos(a)),Math.trunc(cy+(r+3+len)*Math.sin(a)),1);
+    }
+    e.fillCircle(64,cy,r,1);
+    if(noon){ e.print(37,49,'meio-dia!',1); return; }
+    e.fillRect(0,48,128,16,0); e.drawLine(0,47,127,47,1);
+    for(let i=0;i<2;i++){ const bx=(idiv(t,25)+i*50)%160-16, by=14+i*9; e.drawLine(bx,by,bx+3,by+2,1); e.drawLine(bx+3,by+2,bx+6,by,1); }
+    e.print(40,50,'bom dia!',1);
+  }
+  drawBoot(now){
+    const e=this.e, t=now-this.since; e.buf.fill(0);
+    if(t<300){ const w=idiv(t*128,300); e.fillRect(64-idiv(w,2),31,Math.max(w,2),2,1); return; }
+    if(t<TM.BOOT_TV){ const h=2+idiv((t-300)*62,TM.BOOT_TV-300); e.drawRoundRect(0,32-idiv(h,2),128,h,6,1); return; }
+    e.drawRoundRect(0,0,128,64,6,1);
+    for(let i=0;i<7;i++){
+      const lt=t-TM.BOOT_TV-i*TM.BOOT_DROP; if(lt<0) break;
+      const p=Math.min(lt,300)/300;
+      let y=Math.trunc(p<0.7?-16+36*(p/0.7)*(p/0.7):20-6*Math.sin((p-0.7)/0.3*Math.PI));
+      if(t>TM.BOOT_WAVE) y=Math.trunc(20+3*Math.sin(t/120-i*0.8));
+      e.drawChar(22+i*12,y,'OTTOBOT'[i],2);
+    }
+    if(t>TM.BOOT_WAVE){
+      [[10,12],[116,14],[8,46],[118,48],[64,8]].forEach(([x,y],i)=>{ if((idiv(t,200)+i)%3) return; e.drawLine(x-2,y,x+2,y,1); e.drawLine(x,y-2,x,y+2,1); });
+      e.print(25,48,'ottobot.local'.slice(0,Math.min(13,idiv(t-TM.BOOT_WAVE,50))),1);
+    }
+    if(t>TM.BOOT_WIPE) e.fillRect(0,0,128,idiv((t-TM.BOOT_WIPE)*64,TM.BOOT-TM.BOOT_WIPE),0);
+  }
+  // Same layout as the robot's QR screen. The robot encodes the real address (esp_qrcode); here it is only a look-alike.
+  drawQr(){
+    const e=this.e, n=25, px=2, x0=39, y0=7; e.buf.fill(0); e.fillRect(32,0,64,64,1);
+    const corner=(x,y)=>{ for(const [cx,cy] of [[0,0],[n-7,0],[0,n-7]]){ const dx=x-cx, dy=y-cy; if(dx>=-1&&dx<=7&&dy>=-1&&dy<=7) return dx>=0&&dx<7&&dy>=0&&dy<7&&(dx===0||dy===0||dx===6||dy===6||(dx>=2&&dx<=4&&dy>=2&&dy<=4)); } return null; };
+    for(let y=0;y<n;y++) for(let x=0;x<n;x++){ const c=corner(x,y); if(c===null?(x*7+y*13+x*y)%5<2:c) e.fillRect(x0+x*px,y0+y*px,px,px,0); }
+  }
+  drawWifiOk(){
+    const e=this.e; e.buf.fill(0);
+    for(let r=8;r<=24;r+=8){ this.wifiArc(64,32,r); this.wifiArc(64,32,r+1); }
+    e.fillCircle(64,32,2,1);
+    e.print(19,40,'wi-fi conectado',1);
+    const ip=this.ip||'192.168.0.42';  // example until the robot reports its real address
+    e.print(idiv(128-ip.length*6,2),54,ip,1);
+  }
+  drawNoWifi(now){
+    const e=this.e; e.buf.fill(0);
+    const arcs=Math.floor(now/400)%4;
+    for(let i=1;i<=arcs;i++){ this.wifiArc(64,38,i*8); this.wifiArc(64,38,i*8+1); }
+    e.fillCircle(64,38,2,1);
+    for(let d=0;d<2;d++){ e.drawLine(84+d,6,96+d,18,1); e.drawLine(96+d,6,84+d,18,1); }
+    e.print(28,50,'sem wi-fi :(',1);
+  }
+  wifiArc(x0,y0,r){
+    const e=this.e; let f=1-r, ddx=1, ddy=-2*r, x=0, y=r;
+    e.px(x0,y0-r,1);
+    while(x<y){ if(f>=0){ y--; ddy+=2; f+=ddy; } x++; ddx+=2; f+=ddx; e.px(x0+x,y0-y,1); e.px(x0-x,y0-y,1); }
+  }
+}
+
+// Reaction preview that replays a firmware behaviour on a timeline (no sound)
+class Scripted extends Ottobot{
+  constructor(canvas,live,delay){ super(canvas); this.autoMood=false; this.sleepAfter=0; this.live=live; this.t0=millis()+delay; this.i=0; if(live.init) live.init(this); }
+  tick(now){
+    const s=this.live.script;
+    while(now>=this.t0+s[this.i][0]){ s[this.i][1](this,now); if(++this.i===s.length){ this.i=0; this.t0+=this.live.period; } }
+    super.tick(now);
+  }
+}
+const touchAt=(t,ms=150)=>[[t,b=>{ b.touched=true; }],[t+ms,b=>{ b.touched=false; }]];
+const LIVE={
+  boot:{period:7000,script:[[0,b=>b.startBoot()]]},
+  noclock:{period:9000,script:[[0,b=>b.showClock()]],init:b=>{ b.clockKnown=false; }},
+  wifi:{period:15000,script:[[0,b=>b.cheer()]]},
+  pet:{period:11000,script:touchAt(0,4500)},
+  shake:{period:10000,script:[[0,b=>{ b.getSleepy(); b.fallAsleep(); }],[3200,b=>{ b.shaken=true; }]]},
+  sleep:{period:20000,script:[[0,b=>b.getSleepy()],...touchAt(11000),...touchAt(15000,100),...touchAt(15300,100),...touchAt(15600,100)]},
+};
+
+// Catalog. key = name the robot stores (a-z, up to 11 letters)
+const CATS={humor:'Humores',anim:'Animações',forma:'Formatos',efeito:'Efeitos'};
+const SCENES=[
+  {key:'padrao',cat:'humor',name:'Padrão',desc:'Neutro, piscando e olhando em volta.',s:{}},
+  {key:'feliz',cat:'humor',name:'Feliz',desc:'Olhos em meia-lua.',s:{mood:HAPPY}},
+  {key:'cansado',cat:'humor',name:'Cansado',desc:'Pálpebras caídas para fora.',s:{mood:TIRED}},
+  {key:'bravo',cat:'humor',name:'Bravo',desc:'Pálpebras em V.',s:{mood:ANGRY}},
+  {key:'estressado',cat:'humor',name:'Estressado',desc:'Gotas de suor na testa.',s:{sweat:true}},
+  {key:'desconfiado',cat:'humor',name:'Desconfiado',desc:'Cansado, olhando de canto.',s:{mood:TIRED,idle:false,pos:E}},
+  {key:'sonolento',cat:'humor',name:'Sonolento',desc:'Meio fechado, sem piscar.',s:{mood:TIRED,idle:false,autoblink:false,squint:18}},
+  {key:'sapeca',cat:'humor',name:'Sapeca',desc:'Sorriso de olho apertado, olhando de lado.',s:{mood:HAPPY,idle:false,pos:W,hl:24,hr:24}},
+  {key:'confuso',cat:'anim',name:'Confuso',desc:'Chacoalha de lado.',s:{act:1,every:2500}},
+  {key:'rindo',cat:'anim',name:'Rindo',desc:'Pula para cima e para baixo.',s:{act:2,every:2200}},
+  {key:'empolgado',cat:'anim',name:'Empolgado',desc:'Feliz e rindo sem parar.',s:{mood:HAPPY,act:2,every:1200}},
+  {key:'dancando',cat:'anim',name:'Dançando',desc:'Pula de um lado pro outro com música de dança.',s:{mood:HAPPY,idle:false,act:8,every:400,fx:FX.NOTES,song:2}},
+  {key:'piscadela',cat:'anim',name:'Piscadela',desc:'Fecha só o olho esquerdo.',s:{idle:false,act:3,every:2200}},
+  {key:'piscapisca',cat:'anim',name:'Pisca-pisca',desc:'Pisca os dois olhos rapidinho.',s:{idle:false,act:5,every:900}},
+  {key:'curioso',cat:'anim',name:'Curioso',desc:'Olha de lado a lado; o olho de fora cresce.',s:{curious:true,idle:false,act:6,every:1500}},
+  {key:'direcoes',cat:'anim',name:'8 direções',desc:'Passa por N, NE, E, SE, S, SW, W, NW.',s:{idle:false,act:7,every:700}},
+  {key:'comfrio',cat:'anim',name:'Com frio',desc:'Tremendo de lado.',s:{mood:TIRED,idle:false,hf:2}},
+  {key:'assustado',cat:'anim',name:'Assustado',desc:'Olhos altos tremendo.',s:{idle:false,wl:30,wr:30,hl:46,hr:46,r:14,vf:2}},
+  {key:'fofo',cat:'forma',name:'Olhos fofos',desc:'Dois círculos.',s:{r:18}},
+  {key:'arregalado',cat:'forma',name:'Arregalado',desc:'Olhos altos e redondos.',s:{idle:false,wl:32,wr:32,hl:48,hr:48,r:16}},
+  {key:'olhinhos',cat:'forma',name:'Olhinhos',desc:'Olhos pequenininhos.',s:{wl:20,wr:20,hl:20,hr:20,r:10,space:18}},
+  {key:'espiando',cat:'forma',name:'Espiando',desc:'Espiando por baixo da tela.',s:{idle:false,pos:S,hl:20,hr:20,r:6}},
+  {key:'apaixonado',cat:'efeito',name:'Apaixonado',desc:'Corações subindo e bochechas.',s:{mood:HAPPY,fx:FX.LOVE}},
+  {key:'vergonha',cat:'efeito',name:'Envergonhado',desc:'Bochechas e olhar de lado.',s:{mood:HAPPY,idle:false,pos:W,wl:30,wr:30,hl:30,hr:30,fx:FX.BLUSH}},
+  {key:'chorando',cat:'efeito',name:'Chorando',desc:'Lágrimas caindo.',s:{mood:TIRED,idle:false,pos:N,hl:30,hr:30,fx:FX.TEARS}},
+  {key:'cantando',cat:'efeito',name:'Cantando',desc:'Canta "Brilha, brilha, estrelinha" inteira, balançando com notas.',s:{mood:HAPPY,idle:false,autoblink:false,squint:16,r:18,sway:true,fx:FX.NOTES,song:1}},
+  {key:'encantado',cat:'efeito',name:'Encantado',desc:'Olhos grandes e brilhos.',s:{mood:HAPPY,wl:38,wr:38,hl:40,hr:40,r:18,fx:FX.SPARKLE}},
+  {key:'surpreso',cat:'efeito',name:'Surpreso',desc:'Olhos altos e um ! no canto.',s:{idle:false,wl:32,wr:32,hl:48,hr:48,r:16,fx:FX.BANG}},
+  {key:'pensando',cat:'efeito',name:'Pensando',desc:'Olhando para cima, com ?.',s:{idle:false,pos:NW,fx:FX.QUESTION}},
+  {key:'furioso',cat:'efeito',name:'Furioso',desc:'Bravo tremendo, veia de raiva.',s:{mood:ANGRY,idle:false,hf:1,fx:FX.ANGER}},
+  {key:'tonto',cat:'efeito',name:'Tonto',desc:'Olhos em espiral e estrelinhas.',s:{fx:FX.DIZZY}},
+  {key:'furia',cat:'efeito',name:'Fúria',desc:'Olhos largos e baixos, quase retos, sobrancelha franzida, tremendo; veia de raiva pulsando. Não pisca.',s:{mood:ANGRY,idle:false,autoblink:false,wl:44,wr:44,hl:24,hr:24,r:3,space:8,hf:2,fx:FX.ANGER}},
+  {key:'brilhando',cat:'efeito',name:'Brilhando',desc:'Olhos enormes e redondos no centro, estrelinhas acendendo nos cantos. Olhar encantado.',s:{idle:false,wl:42,wr:42,hl:42,hr:42,r:21,space:8,fx:FX.TWINKLE}},
+  {key:'oops',cat:'efeito',name:'Oops!',desc:'Susto desajeitado: o olho direito maior e mais alto, uma exclamação balançando e piscando.',s:{idle:false,wl:28,wr:40,hl:30,hr:46,r:12,space:10,fx:FX.BANG}},
+  {key:'suspeito',cat:'humor',name:'Suspeito',desc:'Olhando de canto para a direita, semicerrado, um olho bem menor que o outro.',s:{mood:TIRED,idle:false,pos:E,wl:36,wr:30,hl:30,hr:18,r:8,space:10}},
+  {key:'hipnotizado',cat:'efeito',name:'Hipnotizado',desc:'Dois círculos grandes com uma espiral girando dentro. Não pisca: olhar vidrado.',s:{idle:false,autoblink:false,wl:40,wr:40,hl:40,hr:40,r:20,space:8,fx:FX.HYPNO}},
+  {key:'scanner',cat:'anim',name:'Scanner',desc:'Faixas finas de visor de robô varrendo de um lado pro outro a cada meio segundo. Não pisca.',s:{idle:false,autoblink:false,wl:30,wr:30,hl:6,hr:6,r:0,space:6,act:6,every:500}},
+  {key:'festeiro',cat:'anim',name:'Festeiro',desc:'Olhos sorrindo em arco, quicando sem parar, cercados de brilhos.',s:{mood:HAPPY,idle:false,r:14,act:2,every:500,fx:FX.SPARKLE}},
+  {key:'timido',cat:'efeito',name:'Tímido',desc:'Olhinhos pequenos e afastados, sorrindo e olhando para baixo, bochechas coradas dos lados.',s:{mood:HAPPY,idle:false,pos:S,wl:20,wr:20,hl:20,hr:20,r:10,space:40,fx:FX.SHY}},
+  {key:'bugado',cat:'anim',name:'Bugado',desc:'Quadrados perfeitos tremendo e pulando para um lado qualquer, como tela com defeito.',s:{idle:false,autoblink:false,wl:30,wr:30,hl:30,hr:30,r:0,space:10,hf:2,vf:2,act:9,every:200}},
+  {key:'ninja',cat:'humor',name:'Ninja',desc:'Faixas bem finas e próximas, bravo, espiando pela fresta da máscara para a direita. Não pisca.',s:{mood:ANGRY,idle:false,autoblink:false,pos:E,wl:34,wr:34,hl:7,hr:7,r:2,space:4}},
+  {key:'panico',cat:'anim',name:'Em pânico',desc:'Olhos altos e estreitos, quase da altura da tela, tremendo; gotas de suor escorrendo. Não pisca.',s:{idle:false,autoblink:false,wl:22,wr:22,hl:52,hr:52,r:10,space:12,hf:1,vf:1,sweat:true}},
+  {key:'zen',cat:'humor',name:'Zen',desc:'Arquinhos finos "^ ^", sorrindo de olhos quase fechados, sereno e parado.',s:{mood:HAPPY,idle:false,autoblink:false,squint:12,r:18}},
+];
+const REACTIONS=[
+  {key:'boot',name:'Ligar',desc:'Abertura OTTOBOT: tela liga como TV, letras caem e quicam, olhos abrem. Só quando liga na energia.'},
+  {key:'noclock',name:'Hora sem Wi-Fi',desc:'Pediu a hora e ele ainda não sabe: tela sem Wi-Fi.',act:'clock'},
+  {key:'wifi',name:'Wi-Fi conectou',desc:'Comemora, mostra "wi-fi conectado" com o endereço e depois a hora.'},
+  {key:'pet',name:'Segurar',desc:'Carinho: olhos ^ ^, corações, ronrona. Fica 4 s depois de soltar.'},
+  {key:'shake',name:'Chacoalhar',desc:'Tonto com espirais, depois bravo. Acorda se estiver dormindo.'},
+  {key:'sleep',name:'Dormir',desc:'Boceja e dorme com Zzz. Toque = canção de ninar, 3 toques rápidos acordam.'},
+];
+const DEFAULT_KEYS=['padrao','feliz','cansado','confuso','rindo','estressado','piscadela','curioso','direcoes'];  // the robot's rotation until the phone changes it
+// Tap actions: built-in reactions, or "s:<key>" for a catalog screen. The robot starts with 1 = joy, 2 = dance, 5 = clock.
+const SCENE_ACTIONS=[['sunrise','Nascer do sol'],['noon','Meio-dia'],['night','Noite com lua (depois dorme)']];
+const TAP_ACTIONS=[['joy','Música feliz e risada'],['clock','Mostrar a hora'],['qr','QR code do site'],['pet','Carinho'],['sleep','Dormir'],['shake','Tonto e bravo'],['cheer','Comemorar'],['joke','Contar uma piada'],['game','Jogo de reflexo'],['simon','Jogo Genius'],['guess','Jogo adivinha o número'],['rps','Jogo pedra, papel e tesoura'],['dino','Jogo Dino'],['lander','Jogo pouso lunar'],['target','Jogo pare no alvo'],['timer','Jogo cronômetro'],['snake','Jogo Snake'],['dice','Dado'],['slots','Caça-níquel'],['weather','Previsão do tempo'],['focus','Pomodoro: 25 min de foco'],['mood','Perguntar como foi o dia'],['water','Lembrar de beber água'],['countdown','Contagem regressiva'],['video','Modo vídeo (1 min)']];
+const DEFAULT_TAP_ROWS=[[1,'joy'],[2,'s:dancando'],[5,'clock'],[6,'qr']];
+// Times of day: minute of the day -> action. The robot starts with 07:00 sunrise, 12:00 noon, 20:00 night.
+const DEFAULT_EVENT_ROWS=[[420,'sunrise'],[720,'noon'],[1200,'night']];
+const hhmm=m=>String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
+const minutesOf=v=>{ const [h,m]=(v||'').split(':').map(Number); return h>=0&&h<24&&m>=0&&m<60?h*60+m:null; };
+const encodeEvents=rows=>[...rows].sort((a,b)=>a[0]-b[0]).map(([m,v])=>{ const a=tapAction(v); return a&&`${hhmm(m)}=${a.act==='screen'?encode(a.key,{...BASE,...a.s}):a.act}`; }).filter(Boolean).join(';');
+function parseEvents(str){
+  const rows=new Map();
+  for(const item of (str||'').split(';')){
+    const eq=item.indexOf('='), m=minutesOf(item.slice(0,eq)), a=item.slice(eq+1);
+    if(eq<1||m===null) continue;
+    const v=a.includes(',')?'s:'+a.split(',')[0]:a;
+    if(tapAction(v)) rows.set(m,v);
+  }
+  return rows;
+}
+const tapAction=v=>{ if(v.startsWith('s:')){ const sc=SCENES.find(s=>s.key===v.slice(2)); return sc&&{act:'screen',key:sc.key,s:sc.s}; } return {act:v}; };
+const tapMapOf=rows=>Object.fromEntries([...rows].map(([n,v])=>[n,tapAction(v)]).filter(([,a])=>a));
+const encodeTaps=rows=>[...rows].sort((a,b)=>a[0]-b[0]).map(([n,v])=>{ const a=tapAction(v); return a&&`${n}=${a.act==='screen'?encode(a.key,{...BASE,...a.s}):a.act}`; }).filter(Boolean).join(';');
+function parseTaps(str){
+  const rows=new Map();
+  for(const item of (str||'').split(';')){
+    const eq=item.indexOf('='), n=+item.slice(0,eq), a=item.slice(eq+1);
+    if(eq<1||!(n>=1&&n<=8)) continue;
+    const v=a.includes(',')?'s:'+a.split(',')[0]:a;
+    if(tapAction(v)) rows.set(n,v);
+  }
+  return rows;
+}
+// ---- UI ----
+
+const serialLines=['OTTOBOT Robot v2.0 Ready!','Tap me for a song, hold me for cuddles 🥰','Shake me and I get dizzy, then angry! 😵😠'];
+function serial(msg){ serialLines.push(msg); while(serialLines.length>6) serialLines.shift(); $('#serial').textContent=serialLines.join('\n'); }
+serial('WiFi: network Ottobot');
+let toastTimer=0;
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('on'),1800); }
+
+// Tabs
+const TABS=['telas','toques','horas','robo','lab'];
+function showTab(t){
+  for(const x of TABS){ const on=x===t; $('#tab-'+x).setAttribute('aria-selected',String(on)); $('#p-'+x).hidden=!on; }
+  try{ localStorage.setItem('ottobot-tab',t); }catch{}
+  if(t==='robo') renderSpark();
+}
+for(const x of TABS) $('#tab-'+x).addEventListener('click',()=>showTab(x));
+let firstTab='telas'; try{ firstTab=localStorage.getItem('ottobot-tab')||'telas'; }catch{}
+
+// Only animate what is on screen (the phone has 30+ little displays)
+const screens=[], byCanvas=new Map();
+const io='IntersectionObserver' in window?new IntersectionObserver(es=>es.forEach(en=>{ const s=byCanvas.get(en.target); if(s) s.visible=en.isIntersecting; })):null;
+function watch(canvas,s){ screens.push(s); if(io){ byCanvas.set(canvas,s); s.visible=false; io.observe(canvas); } return s; }
+function unwatch(s){ screens.splice(screens.indexOf(s)>>>0,1); for(const [cv,x] of byCanvas) if(x===s){ io.unobserve(cv); byCanvas.delete(cv); } }
+const MODULE='<div class="module mini"><div class="pins" aria-hidden="true"><span>GND</span><span>VCC</span><span>SCL</span><span>SDA</span></div><div class="glass"><canvas width="128" height="64"></canvas></div></div>';
+
+// Lab: the full firmware, plus the design panel
+const lab=watch($('#labCanvas'),new Ottobot($('#labCanvas'),{sound:true,log:serial}));
+let tapRows=new Map(DEFAULT_TAP_ROWS);
+lab.autoMood=false; lab.tapMap=tapMapOf(tapRows);
+let st={...BASE}, sceneName=null, liveNote=null;
+lab.design(st);
+lab.startBoot();  // the page opens with the robot's power-on intro
+
+const SLIDERS=[['wl','Largura esq.',8,60],['wr','Largura dir.',8,60],['hl','Altura esq.',4,60],['hr','Altura dir.',4,60],['r','Arredondamento',0,30],['space','Espaço entre',-20,40],['squint','Abertura fixa',0,40],['hf','Tremor lateral',0,20],['vf','Tremor vertical',0,20]];
+$('#shape').insertAdjacentHTML('beforeend',SLIDERS.map(([id,label,min,max])=>`<label class="sl"><span>${label}</span><input type="range" id="${id}" min="${min}" max="${max}" step="1"><output id="${id}-o"></output></label>`).join('')+'<p class="hint">Abertura fixa 0 = normal. Acima de 0 deixa os olhos apertados.</p>');
+$('#act').innerHTML=ACT_LABEL.map((l,i)=>`<option value="${i}">${l}</option>`).join('');
+$('#fx').innerHTML=FX_LABEL.map((l,i)=>`<option value="${i}">Efeito: ${l}</option>`).join('');
+$('#song').innerHTML=SONG_LABEL.map((l,i)=>`<option value="${i}">Música: ${l}</option>`).join('');
+const DIRS=[[NW,'↖','Noroeste'],[N,'↑','Norte'],[NE,'↗','Nordeste'],[W,'←','Oeste'],[CENTER,'●','Centro'],[E,'→','Leste'],[SW,'↙','Sudoeste'],[S,'↓','Sul'],[SE,'↘','Sudeste']];
+$('#dir').innerHTML=DIRS.map(([p,ch,nm])=>`<button type="button" data-pos="${p}" aria-label="Olhar para ${nm}">${ch}</button>`).join('');
+const TOGGLES=['idle','autoblink','curious','cyclops','sweat','sway'];
+
+function syncUI(){
+  document.querySelector(`input[name=mood][value="${st.mood}"]`).checked=true;
+  for(const id of TOGGLES) $('#'+id).checked=st[id];
+  for(const [id] of SLIDERS){ $('#'+id).value=st[id]; $('#'+id+'-o').textContent=st[id]; }
+  $('#act').value=st.act; $('#fx').value=st.fx; $('#song').value=st.song;
+  $('#every').value=st.every||1500; $('#every-o').textContent=((st.every||1500)/1000).toFixed(1)+'s';
+  document.querySelectorAll('#dir button').forEach(b=>b.setAttribute('aria-pressed',String(!st.idle&&(st.pos??CENTER)===+b.dataset.pos)));
+  $('#code').textContent=liveNote||code(st);
+  $('#codeTitle').textContent=sceneName?`Código: ${sceneName}`:'Código da sua tela';
+  $('#mode').textContent=MODE_LABEL[lab.mode];
+}
+function changed(){ sceneName=null; liveNote=null; markCard(null); lab.design(st); syncUI(); }
+// After the firmware changes the eyes (touch, shake, sleep...), show its state in the panel
+function syncFromEngine(){
+  const e=lab.e;
+  st.mood=e.tired?TIRED:e.angry?ANGRY:e.happy?HAPPY:DEFAULT;
+  Object.assign(st,{sweat:!!e.sweat,autoblink:!!e.autoblinker,idle:!!e.idle,curious:!!e.curious,cyclops:!!e.cyclops,r:e.eyeLborderRadiusDefault,squint:lab.lid&&lab.lidTarget!==e.eyeLheightDefault?lab.lidTarget:0});
+  if(lab.mode===M.SLEEPING) st.pos=S; else if(lab.mode!==M.AWAKE) st.pos=CENTER;
+  syncUI();
+}
+document.querySelectorAll('input[name=mood]').forEach(r=>r.addEventListener('change',()=>{ st.mood=+r.value; changed(); }));
+for(const id of TOGGLES) $('#'+id).addEventListener('change',e=>{ st[id]=e.target.checked; changed(); });
+for(const [id] of SLIDERS) $('#'+id).addEventListener('input',e=>{ st[id]=+e.target.value; if(id==='squint'&&st.squint) st.autoblink=false; changed(); });
+$('#act').addEventListener('change',e=>{ st.act=+e.target.value; if(st.act&&!st.every) st.every=1500; changed(); });
+$('#every').addEventListener('input',e=>{ st.every=+e.target.value; changed(); });
+$('#fx').addEventListener('change',e=>{ st.fx=+e.target.value; changed(); });
+$('#song').addEventListener('change',e=>{ unlockAudio(); st.song=+e.target.value; changed(); });
+$('#dir').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; st.pos=+b.dataset.pos; st.idle=false; changed(); });
+document.querySelectorAll('[data-once]').forEach(b=>b.addEventListener('click',()=>{
+  const a=b.dataset.once;
+  if(a==='close'){ st.autoblink=false; st.squint=0; changed(); lab.e.close(); }
+  else if(a==='open'){ st.autoblink=true; st.squint=0; changed(); lab.e.open(); }
+  else lab.doAct(+a);
+}));
+$('#reset').addEventListener('click',()=>{ st={...BASE}; changed(); });
+
+const touch=$('#touch');
+const press=v=>{ lab.touched=v; touch.classList.toggle('held',v); };
+touch.addEventListener('pointerdown',e=>{ unlockAudio(); touch.setPointerCapture(e.pointerId); press(true); });
+for(const ev of ['pointerup','pointercancel','lostpointercapture']) touch.addEventListener(ev,()=>press(false));
+touch.addEventListener('keydown',e=>{ if((e.key===' '||e.key==='Enter')&&!e.repeat){ e.preventDefault(); unlockAudio(); press(true); } });
+touch.addEventListener('keyup',e=>{ if(e.key===' '||e.key==='Enter') press(false); });
+touch.addEventListener('contextmenu',e=>e.preventDefault());
+$('#shake').addEventListener('click',()=>{ unlockAudio(); lab.shaken=true; });
+$('#sleepNow').addEventListener('click',()=>{ unlockAudio(); lab.getSleepy(); });
+$('#auto').addEventListener('change',e=>{ lab.autoMood=e.target.checked; lab.lastEmotion=millis(); });
+$('#sleepOn').addEventListener('change',e=>{ lab.sleepAfter=e.target.checked?120000:0; lab.lastActivity=millis(); });
+$('#color').addEventListener('change',e=>{ LIT=e.target.value.split(',').map(Number); document.documentElement.style.setProperty('--glow',`rgb(${LIT.join(' ')} / .55)`); });
+$('#copy').addEventListener('click',()=>{
+  const txt=$('#code').textContent, btn=$('#copy');
+  const done=()=>{ btn.textContent='Copiado'; setTimeout(()=>btn.textContent='Copiar',1400); };
+  const pick=()=>{ const r=document.createRange(); r.selectNodeContents($('#code')); const s=getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent='Use Ctrl+C'; };
+  try{ navigator.clipboard.writeText(txt).then(done,pick); }catch{ pick(); }
+});
+$('#labShow').addEventListener('click',()=>showOnRobot(encode('lab',st)));
+
+// Catalog: pick which screens the robot draws from
+const picked=new Set(DEFAULT_KEYS);
+$('#grid').innerHTML=SCENES.map((sc,i)=>`
+  <div class="card" data-cat="${sc.cat}" data-key="${sc.key}">
+    <button class="card-prev" type="button" data-edit="${i}" aria-label="Abrir ${sc.name} no laboratório">${MODULE}</button>
+    <div class="card-head"><h3>${sc.name}</h3><label class="switch"><input type="checkbox" class="pick" data-key="${sc.key}" aria-label="${sc.name} no rodízio"><span></span></label></div>
+    <p>${sc.desc}</p>
+    <button class="btn sm robot-only" type="button" data-show="${i}" hidden>Ver no robô</button>
+  </div>`).join('');
+document.querySelectorAll('#grid .card').forEach((el,i)=>{
+  const cv=el.querySelector('canvas'), s=watch(cv,new Ottobot(cv));
+  s.autoMood=false; s.sleepAfter=0; s.showDef(SCENES[i].s,SCENES[i].key);
+});
+const FILTERS=[['picked','No rodízio'],['all','Todas'],...Object.entries(CATS)];
+let filter='all';
+function countFor(k){ return k==='all'?SCENES.length:k==='picked'?SCENES.filter(s=>picked.has(s.key)).length:SCENES.filter(s=>s.cat===k).length; }
+function renderFilter(){
+  $('#filter').innerHTML=FILTERS.map(([k,l])=>`<button type="button" data-f="${k}" aria-pressed="${k===filter}">${l} <span>${countFor(k)}</span></button>`).join('');
+  document.querySelectorAll('#grid .card').forEach(c=>c.hidden=filter==='picked'?!picked.has(c.dataset.key):filter!=='all'&&c.dataset.cat!==filter);
+}
+$('#filter').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; filter=b.dataset.f; renderFilter(); });
+function syncPicks(){
+  document.querySelectorAll('.pick').forEach(c=>{ c.checked=picked.has(c.dataset.key); c.closest('.card').classList.toggle('picked',c.checked); });
+  const n=countFor('picked'); $('#count').textContent=n===1?'1 tela':`${n} telas`;
+  lab.list=SCENES.filter(s=>picked.has(s.key)).map(s=>({key:s.key,s:s.s}));
+  renderFilter();
+}
+$('#grid').addEventListener('change',e=>{
+  const c=e.target.closest('.pick'); if(!c) return;
+  if(!c.checked&&countFor('picked')<=1){ c.checked=true; toast('Deixe pelo menos uma tela ligada'); return; }
+  if(c.checked) picked.add(c.dataset.key); else picked.delete(c.dataset.key);
+  syncPicks();
+  if(robotOn) saveConfig();
+});
+$('#grid').addEventListener('click',e=>{
+  const ed=e.target.closest('[data-edit]'), sh=e.target.closest('[data-show]');
+  if(ed){ const sc=SCENES[+ed.dataset.edit]; unlockAudio(); st={...BASE,...sc.s}; sceneName=sc.name; liveNote=null; lab.design(st); markCard(ed.closest('.card')); syncUI(); showTab('lab'); scrollTo({top:0}); }
+  if(sh){ const sc=SCENES[+sh.dataset.show]; showOnRobot(encode(sc.key,{...BASE,...sc.s})); }
+});
+function markCard(card){ document.querySelectorAll('.card').forEach(c=>c.classList.toggle('on',c===card)); }
+
+// Reactions (Robô tab)
+const tapN=n=>{ for(let i=0;i<n;i++){ setTimeout(()=>press(true),i*250); setTimeout(()=>press(false),i*250+100); } };
+const LAB_ACT={
+  boot:()=>lab.startBoot(),
+  noclock:()=>{ lab.clockKnown=false; lab.showClock(); setTimeout(()=>{ lab.clockKnown=true; },7000); },
+  wifi:()=>lab.cheer(),
+  pet:()=>{ press(true); setTimeout(()=>press(false),4500); },
+  shake:()=>{ lab.shaken=true; },
+  sleep:()=>lab.getSleepy(),
+};
+$('#reactions').innerHTML=REACTIONS.map(r=>`
+  <div class="card">
+    ${MODULE}
+    <div class="card-head"><h3>${r.name}</h3></div>
+    <p>${r.desc}</p>
+    <button class="btn sm" type="button" data-react="${r.key}"><span class="robot-only" hidden>Fazer no robô</span><span class="offline-only">Testar no laboratório</span></button>
+  </div>`).join('');
+document.querySelectorAll('#reactions canvas').forEach((cv,i)=>watch(cv,new Scripted(cv,LIVE[REACTIONS[i].key],300+i*150)));
+$('#reactions').addEventListener('click',e=>{
+  const b=e.target.closest('[data-react]'); if(!b) return; unlockAudio();
+  const k=b.dataset.react, r=REACTIONS.find(x=>x.key===k);
+  if(robotOn) api('/api/do',{what:r.act||k}).then(s=>{ showRobot(s); toast('Feito no robô'); }).catch(lost);
+  else { LAB_ACT[k](); showTab('lab'); scrollTo({top:0}); }
+});
+
+// Taps tab: one row per tap count, with a live preview of what it does
+class ActionPreview extends Ottobot{
+  constructor(canvas,a){ super(canvas); this.autoMood=false; this.sleepAfter=0; this.a=a; this.nextAct=millis()+300; if(a.act==='screen') this.showDef(a.s,a.key); }
+  tick(now){ if(this.a.act!=='screen'&&now>=this.nextAct){ this.doTapAction(this.a); this.nextAct=now+({joy:4000,clock:9000,qr:8000,pet:9000,sleep:16000,shake:8000,cheer:14000,sunrise:17000,noon:17000,night:17000}[this.a.act]||6000); } super.tick(now); }
+}
+const TAP_OPTIONS='<optgroup label="Cenas do dia">'+SCENE_ACTIONS.map(([v,l])=>`<option value="${v}">${l}</option>`).join('')+'</optgroup><optgroup label="Reações">'+TAP_ACTIONS.map(([v,l])=>`<option value="${v}">${l}</option>`).join('')+'</optgroup>'
+  +Object.entries(CATS).map(([c,l])=>`<optgroup label="Telas: ${l}">`+SCENES.filter(s=>s.cat===c).map(s=>`<option value="s:${s.key}">${s.name}</option>`).join('')+'</optgroup>').join('');
+let tapPreviews=[];
+function renderTaps(){
+  for(const s of tapPreviews) unwatch(s);
+  tapPreviews=[];
+  const rows=[...tapRows].sort((a,b)=>a[0]-b[0]);
+  $('#tapList').innerHTML=rows.length?rows.map(([n])=>`
+    <div class="tap-row">
+      <div class="tap-n" aria-hidden="true"><b>${n}×</b><span>${'●'.repeat(n)}</span></div>
+      <div class="tap-main">
+        <label for="tapSel${n}">${n===1?'1 toque':n+' toques'}</label>
+        <select id="tapSel${n}" data-n="${n}">${TAP_OPTIONS}</select>
+        <div class="tap-btns"><button class="btn sm" type="button" data-test="${n}"><span class="robot-only" ${robotOn?'':'hidden'}>Testar no robô</span><span class="offline-only" ${robotOn?'hidden':''}>Testar no laboratório</span></button><button class="btn sm" type="button" data-del="${n}">Remover</button></div>
+      </div>
+      <div class="tap-prev">${MODULE}</div>
+    </div>`).join(''):'<p class="hint">Nenhum toque configurado: toques rápidos não fazem nada.</p>';
+  for(const [n,v] of rows){
+    $('#tapSel'+n).value=v;
+    const cv=$('#tapSel'+n).closest('.tap-row').querySelector('canvas');
+    tapPreviews.push(watch(cv,new ActionPreview(cv,tapAction(v))));
+  }
+  const free=[1,2,3,4,5,6,7,8].filter(n=>!tapRows.has(n));
+  $('#tapAddN').innerHTML=free.map(n=>`<option value="${n}">${n===1?'1 toque':n+' toques'}</option>`).join('');
+  $('#tapAdd').disabled=$('#tapAddN').disabled=!free.length;
+  lab.tapMap=tapMapOf(tapRows);
+}
+function tapsChanged(){ renderTaps(); if(robotOn) saveConfig(); }
+$('#tapList').addEventListener('change',e=>{ const s=e.target.closest('select[data-n]'); if(!s) return; tapRows.set(+s.dataset.n,s.value); tapsChanged(); });
+$('#tapList').addEventListener('click',e=>{
+  const del=e.target.closest('[data-del]'), test=e.target.closest('[data-test]');
+  if(del){ tapRows.delete(+del.dataset.del); tapsChanged(); }
+  if(test){ const n=+test.dataset.test; unlockAudio();
+    if(robotOn) api('/api/do',{what:'taps',n}).then(s=>{ showRobot(s); toast('Feito no robô'); }).catch(lost);
+    else { showTab('lab'); scrollTo({top:0}); tapN(n); } }
+});
+$('#tapAdd').addEventListener('click',()=>{ const n=+$('#tapAddN').value; if(!n) return; tapRows.set(n,'joy'); tapsChanged(); $('#tapSel'+n).focus(); });
+
+// Times tab: one row per time of day, same actions as the taps, with a live preview
+let eventRows=new Map(DEFAULT_EVENT_ROWS), eventPreviews=[];
+function renderEvents(){
+  for(const s of eventPreviews) unwatch(s);
+  eventPreviews=[];
+  const rows=[...eventRows].sort((a,b)=>a[0]-b[0]);
+  $('#eventList').innerHTML=rows.length?rows.map(([m])=>`
+    <div class="tap-row">
+      <div class="tap-n" aria-hidden="true"><b style="font-size:17px">${hhmm(m)}</b></div>
+      <div class="tap-main">
+        <div class="row"><label for="evT${m}">Às</label><input class="txt" type="time" id="evT${m}" data-m="${m}" value="${hhmm(m)}" style="width:auto"></div>
+        <select id="evSel${m}" data-m="${m}" aria-label="O que acontece às ${hhmm(m)}">${TAP_OPTIONS}</select>
+        <div class="tap-btns"><button class="btn sm" type="button" data-evtest="${m}"><span class="robot-only" ${robotOn?'':'hidden'}>Testar no robô</span><span class="offline-only" ${robotOn?'hidden':''}>Testar no laboratório</span></button><button class="btn sm" type="button" data-evdel="${m}">Remover</button></div>
+      </div>
+      <div class="tap-prev">${MODULE}</div>
+    </div>`).join(''):'<p class="hint">Nenhum horário: ele não faz nada sozinho nas horas do dia.</p>';
+  for(const [m,v] of rows){
+    $('#evSel'+m).value=v;
+    const cv=$('#evSel'+m).closest('.tap-row').querySelector('canvas');
+    eventPreviews.push(watch(cv,new ActionPreview(cv,tapAction(v))));
+  }
+}
+function eventsChanged(){ renderEvents(); if(robotOn) saveConfig(); }
+$('#eventList').addEventListener('change',e=>{
+  const sel=e.target.closest('select[data-m]'), tm=e.target.closest('input[data-m]');
+  if(sel){ eventRows.set(+sel.dataset.m,sel.value); eventsChanged(); }
+  if(tm){ const from=+tm.dataset.m, to=minutesOf(tm.value); if(to===null||to===from) return;
+    if(eventRows.has(to)){ toast('Já tem algo nesse horário'); tm.value=hhmm(from); return; }
+    const v=eventRows.get(from); eventRows.delete(from); eventRows.set(to,v); eventsChanged(); }
+});
+$('#eventList').addEventListener('click',e=>{
+  const del=e.target.closest('[data-evdel]'), test=e.target.closest('[data-evtest]');
+  if(del){ eventRows.delete(+del.dataset.evdel); eventsChanged(); }
+  if(test){ const a=tapAction(eventRows.get(+test.dataset.evtest)); unlockAudio();
+    if(robotOn) api('/api/do',{what:'act',a:a.act==='screen'?encode(a.key,{...BASE,...a.s}):a.act}).then(s=>{ showRobot(s); toast('Feito no robô'); }).catch(lost);
+    else { showTab('lab'); scrollTo({top:0}); lab.doTapAction(a); } }
+});
+$('#evAdd').addEventListener('click',()=>{
+  const m=minutesOf($('#evAddT').value); if(m===null) return;
+  if(eventRows.has(m)){ toast('Já tem algo nesse horário'); return; }
+  eventRows.set(m,'s:feliz'); eventsChanged(); $('#evSel'+m).focus();
+});
+
+// Sleep and silence (Times tab)
+const SLEEP_HINT=['Como sempre foi: parado por um tempo, ele boceja e dorme.',
+  'Dorme no horário e acorda de manhã. Se você acordar ele à noite, volta a dormir depois de 1 minuto sem toque. Precisa da hora.',
+  'Nunca dorme sozinho (a cena "Noite com lua" também não faz ele dormir).'];
+function sleepModeUI(){
+  const mode=+(document.querySelector('input[name=smode]:checked')||{value:0}).value;
+  $('#sleepIdle').hidden=mode!==0; $('#sleepNight').hidden=mode!==1; $('#sleepHint').textContent=SLEEP_HINT[mode];
+}
+document.querySelectorAll('input[name=smode]').forEach(r=>r.addEventListener('change',()=>{ sleepModeUI(); if(robotOn) saveConfig(); }));
+for(const id of ['cfgBedFrom','cfgBedTo','cfgMute','cfgQuiet','cfgQFrom','cfgQTo']) $('#'+id).addEventListener('change',()=>{ if(robotOn) saveConfig(); });
+
+// Robot link: /api/* only answers when this page is opened from the robot (Ottobot Wi-Fi or ottobot.local)
+let robotOn=false;
+async function api(path,params){
+  const r=await fetch(path,params?{method:'POST',body:new URLSearchParams(params)}:{cache:'no-store'});
+  if(!r.ok) throw new Error('HTTP '+r.status);
+  return r.json();
+}
+function setOnline(on){
+  robotOn=on; $('#link').textContent=on?'Conectado':'Sem conexão'; $('#link').classList.toggle('live',on);
+  document.querySelectorAll('.robot-only').forEach(el=>el.hidden=!on);
+  document.querySelectorAll('.offline-only').forEach(el=>el.hidden=on);
+  document.querySelectorAll('.cfg').forEach(el=>el.disabled=!on);
+}
+const RESET=['desconhecido','ligado na energia','botão de reset','reinício pelo programa','erro no programa','watchdog (travou)','watchdog (travou)','watchdog (travou)','acordou do sono profundo','queda de energia','SDIO','pela USB','JTAG','eFuse','oscilação de energia','CPU travou'];
+function showRobot(s){
+  if(!robotOn) setOnline(true);
+  const sc=SCENES.find(x=>x.key===s.screen);
+  $('#robotNow').textContent=s.mode!==M.AWAKE?MODE_LABEL[s.mode]:sc?sc.name:s.screen==='lab'?'Tela do laboratório':'Feliz';
+  $('#robotTime').textContent=s.time?new Date(s.time*1000).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):'sem hora (abra pelo Wi-Fi de casa ou deixe esta página aberta)';
+  renderHome(s);
+  $('#silentNow').hidden=!s.silent;
+  if(s.home) lab.ip=s.home;
+  if(s.fps!==undefined) addPerf(s);
+  if(s.love!==undefined){ $('#robotLove').value=s.love; $('#robotLoveTxt').textContent=s.love+(s.love<10?' · chorando':s.love<30?' · carente':''); }
+}
+$('#btnLonely').addEventListener('click',()=>api('/api/do',{what:'lonely'}).then(s=>{ showRobot(s); toast('Feito no robô'); }).catch(lost));
+let scanning=false;  // while the robot scans, missed replies are expected
+function lost(){ if(robotOn&&!scanning){ setOnline(false); toast('Sem conexão com o robô'); } }
+function fillSettings(s){
+  picked.clear(); for(const k of s.keys.split(',')) if(SCENES.some(x=>x.key===k)) picked.add(k);
+  if(!picked.size) DEFAULT_KEYS.forEach(k=>picked.add(k));
+  syncPicks();
+  $('#cfgInterval').value=s.interval; $('#cfgSleep').value=s.sleep; $('#cfgMute').checked=!s.sound;
+  if(s.smode!==undefined){ document.querySelector(`input[name=smode][value="${s.smode}"]`).checked=true; $('#cfgBedFrom').value=hhmm(s.bfrom); $('#cfgBedTo').value=hhmm(s.bto); sleepModeUI(); }
+  if(s.quiet!==undefined){ $('#cfgQuiet').checked=!!s.quiet; $('#cfgQFrom').value=hhmm(s.qfrom); $('#cfgQTo').value=hhmm(s.qto); }
+  if(s.events!==undefined){ eventRows=parseEvents(s.events); renderEvents(); }
+  lab.interval=s.interval*1000;
+  if(s.taps!==undefined){ tapRows=parseTaps(s.taps); renderTaps(); }
+  if(s.ssid) $('#homeSsid').value=s.ssid;
+}
+function saveConfig(){
+  const list=SCENES.filter(s=>picked.has(s.key)).map(s=>encode(s.key,{...BASE,...s.s})).join(';');
+  const smode=+(document.querySelector('input[name=smode]:checked')||{value:0}).value;
+  api('/api/config',{list,taps:encodeTaps(tapRows),events:encodeEvents(eventRows),interval:$('#cfgInterval').value,
+    sleep:$('#cfgSleep').value,smode,bfrom:minutesOf($('#cfgBedFrom').value)??1260,bto:minutesOf($('#cfgBedTo').value)??420,
+    sound:$('#cfgMute').checked?0:1,quiet:$('#cfgQuiet').checked?1:0,qfrom:minutesOf($('#cfgQFrom').value)??1320,qto:minutesOf($('#cfgQTo').value)??420})
+    .then(s=>{ showRobot(s); lab.interval=s.interval*1000; toast('Salvo no Ottobot'); }).catch(lost);
+}
+function showOnRobot(line){ api('/api/show',{s:line}).then(s=>{ showRobot(s); toast('Mostrando no robô'); }).catch(lost); }
+document.querySelectorAll('[data-step]').forEach(b=>b.addEventListener('click',()=>{
+  const [id,d]=b.dataset.step.split(','), inp=$('#'+id);
+  inp.value=Math.min(+inp.max,Math.max(+inp.min,(+inp.value||0)+ +d)); inp.dispatchEvent(new Event('change'));
+}));
+for(const id of ['cfgInterval','cfgSleep']) $('#'+id).addEventListener('change',()=>{ if(robotOn) saveConfig(); });
+
+// Firmware update over Wi-Fi (the robot checks its own Wi-Fi password)
+$('#otaSend').addEventListener('click',async()=>{
+  const f=$('#otaFile').files[0], out=$('#otaState'), pass=$('#otaPass').value||'ottobot1'; if(!f){ out.textContent='Escolha o arquivo .bin'; return; }
+  const body=new FormData(); body.append('firmware',f,f.name); out.textContent='Enviando… não desligue o robô.';
+  try{ const r=await fetch('/api/update?pass='+encodeURIComponent(pass),{method:'POST',body}); out.textContent=r.ok?'Pronto! Ele está reiniciando.':r.status===403?'Senha errada.':'Não deu certo (arquivo errado?).'; }
+  catch(e){ out.textContent='A conexão caiu no meio. Tente de novo.'; }
+});
+// Home Wi-Fi form (network names come from neighbours: always set as text, never as HTML)
+const link=url=>Object.assign(document.createElement('a'),{href:url,textContent:url.replace('http://','')});
+function renderHome(s){
+  const el=$('#homeStatus'); el.replaceChildren();
+  if(!s.ssid){ el.textContent='Não configurado.'; return; }
+  if(s.home){ el.append(`Conectado em ${s.ssid}. No Wi-Fi de casa, abra `,link('http://ottobot.local'),' ou ',link('http://'+s.home),'.'); }
+  else el.textContent=s.homeFail?`Não conectou em ${s.ssid}. Confira a senha e tente de novo.`:`Conectando em ${s.ssid}…`;
+}
+// Scan: the robot hops channels for ~3 s, so a request may fail meanwhile; keep asking instead of calling it lost
+const signal=r=>r>=-55?[4,'forte']:r>=-65?[3,'bom']:r>=-75?[2,'fraco']:[1,'muito fraco'];
+function renderNets(list){
+  const box=$('#netList'), hint=$('#netHint'), best=new Map();
+  for(const n of list) if(n.s&&(!best.has(n.s)||best.get(n.s).r<n.r)) best.set(n.s,n);  // same name on several routers: keep the strongest
+  const nets=[...best.values()].sort((a,b)=>b.r-a.r);
+  hint.hidden=false; hint.textContent=nets.length?`${nets.length} redes. Toque na sua:`:'Nenhuma rede encontrada. Chegue o robô mais perto do roteador e procure de novo.';
+  box.replaceChildren(...nets.map(n=>{
+    const [bars,word]=signal(n.r), b=document.createElement('button');
+    b.type='button'; b.className='net'; b.setAttribute('aria-pressed',String(n.s===$('#homeSsid').value));
+    b.setAttribute('aria-label',`${n.s}, sinal ${word}, ${n.l?'com senha':'aberta'}`);
+    const ic=document.createElement('span'); ic.className='bars'; ic.setAttribute('aria-hidden','true');
+    [4,7,10,14].forEach((h,i)=>{ const bar=document.createElement('i'); bar.style.height=h+'px'; if(i<bars) bar.className='on'; ic.append(bar); });
+    const name=document.createElement('span'); name.className='net-name'; name.textContent=n.s;
+    const meta=document.createElement('span'); meta.className='net-meta'; meta.textContent=`${word}${n.l?' · senha':' · aberta'}`;
+    b.append(ic,name,meta);
+    b.addEventListener('click',()=>{
+      $('#homeSsid').value=n.s; box.querySelectorAll('.net').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
+      (n.l?$('#homePass'):$('#homeSave')).focus();
+    });
+    return b;
+  }));
+}
+$('#scanBtn').addEventListener('click',()=>{
+  const btn=$('#scanBtn'), hint=$('#netHint'); btn.textContent='Procurando…'; btn.disabled=true;
+  hint.hidden=false; hint.textContent='Procurando redes perto do robô… (uns 5 segundos)';
+  let tries=0; scanning=true;
+  const done=()=>{ scanning=false; btn.textContent='Procurar redes'; btn.disabled=!robotOn; };
+  const poll=first=>api(first?'/api/scan?start=1':'/api/scan').then(r=>{
+    if(r.scanning&&++tries<15){ setTimeout(()=>poll(false),1200); return; }
+    renderNets(r.nets||[]); done();
+  }).catch(()=>{ if(++tries<15) setTimeout(()=>poll(false),1200); else { done(); hint.textContent='O robô não respondeu. Confira se o celular ainda está no Wi-Fi Ottobot e tente de novo.'; } });
+  poll(true);
+});
+$('#homeSave').addEventListener('click',()=>{
+  const ssid=$('#homeSsid').value.trim(); if(!ssid){ toast('Escolha a rede'); return; }
+  api('/api/wifi',{ssid,pass:$('#homePass').value}).then(s=>{ $('#homePass').value=''; showRobot(s); toast('Conectando… pode levar até 20 s'); }).catch(lost);
+});
+$('#homeForget').addEventListener('click',()=>api('/api/wifi',{ssid:''}).then(s=>{ $('#homeSsid').value=''; showRobot(s); toast('Wi-Fi de casa esquecido'); }).catch(lost));
+
+// Performance: tiles + sparkline of the worst pause, one sample per state poll (every 3 s)
+const PERF_N=40, PERF_WARN=120, PERF_CRIT=1000, perfHist=[];
+function fmtUp(sec){ const h=Math.floor(sec/3600), m=Math.floor(sec%3600/60); return h?`${h} h ${m} min`:m?`${m} min`:`${sec} s`; }
+function addPerf(s){
+  perfHist.push(s.loopMax); if(perfHist.length>PERF_N) perfHist.shift();
+  $('#pFps').textContent=s.fps; $('#pMax').textContent=s.loopMax+' ms'; $('#pAvg').textContent=s.loopAvg+' ms';
+  $('#pHeap').textContent=Math.round(s.heap/1024)+' KB'; $('#pHeapMin').textContent=`menor desde que ligou: ${Math.round(s.heapMin/1024)} KB`;
+  $('#pTemp').textContent=s.temp+' °C'; $('#pUp').textContent=fmtUp(s.up); $('#pReset').textContent='último reinício: '+(RESET[s.reset]||'desconhecido');
+  $('#pWifi').textContent=s.clients===1?'1 celular':`${s.clients} celulares`;
+  $('#pWifiSub').textContent=s.home?`na rede Ottobot · casa ${s.rssi} dBm`:'na rede Ottobot';
+  const lvl=s.loopMax>=PERF_CRIT?['crit','■ Travou']:s.loopMax>=PERF_WARN||s.fps<10?['warn','▲ Engasgou']:['ok','● Liso'];
+  const pill=$('#perfState'); pill.className='state '+lvl[0]; pill.textContent=lvl[1];
+  renderSpark();
+}
+const SVG='http://www.w3.org/2000/svg';
+const el=(tag,attrs)=>{ const n=document.createElementNS(SVG,tag); for(const k in attrs) n.setAttribute(k,attrs[k]); return n; };
+function sparkGeom(){
+  const svg=$('#pSpark'), W=Math.max(160,Math.round(svg.getBoundingClientRect().width)||300), H=72, n=perfHist.length;
+  const top=Math.max(PERF_WARN*1.8,...perfHist)*1.1, step=(W-12)/(PERF_N-1);
+  return {svg,W,H,n,x:i=>W-6-(n-1-i)*step,y:v=>H-4-(H-14)*Math.min(v,top)/top};
+}
+function renderSpark(){
+  const {svg,W,H,n,x,y}=sparkGeom();
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`); svg.replaceChildren();
+  if(!n){ svg.setAttribute('aria-label','Sem dados ainda'); return; }
+  const pts=perfHist.map((v,i)=>`${x(i).toFixed(1)},${y(v).toFixed(1)}`);
+  svg.append(el('line',{class:'base',x1:0,x2:W,y1:y(0),y2:y(0)}));
+  svg.append(el('line',{class:'th',x1:0,x2:W,y1:y(PERF_WARN),y2:y(PERF_WARN)}));
+  const lbl=el('text',{class:'th-l',x:2,y:y(PERF_WARN)-4}); lbl.textContent='120 ms'; svg.append(lbl);
+  if(n>1){
+    svg.append(el('path',{class:'ar',d:`M${x(0).toFixed(1)},${y(0)} L${pts.join(' L')} L${x(n-1).toFixed(1)},${y(0)} Z`}));
+    svg.append(el('polyline',{class:'ln',points:pts.join(' ')}));
+  }
+  svg.append(el('circle',{class:'dot',cx:x(n-1),cy:y(perfHist[n-1]),r:4}));
+  svg.setAttribute('aria-label',`Pior pausa nos últimos ${n*3} s: agora ${perfHist[n-1]} ms, máxima ${Math.max(...perfHist)} ms`);
+}
+const sparkWrap=$('#pSpark').parentElement;
+sparkWrap.addEventListener('pointermove',e=>{
+  const {svg,W,n,x,y}=sparkGeom(); if(!n) return;
+  const r=svg.getBoundingClientRect(), px=(e.clientX-r.left)*W/r.width;
+  let i=0; for(let k=1;k<n;k++) if(Math.abs(x(k)-px)<Math.abs(x(i)-px)) i=k;
+  svg.querySelector('.xh')?.remove();
+  svg.append(el('line',{class:'xh',x1:x(i),x2:x(i),y1:0,y2:72}));
+  const tip=$('#pTip'); tip.hidden=false; tip.style.left=(x(i)*r.width/W)+'px';
+  tip.textContent=(n-1-i?`há ${(n-1-i)*3} s`:'agora')+`: ${perfHist[i]} ms`;
+});
+sparkWrap.addEventListener('pointerleave',()=>{ $('#pTip').hidden=true; $('#pSpark').querySelector('.xh')?.remove(); });
+
+setOnline(false);
+syncPicks();
+renderTaps();
+renderEvents();
+document.querySelector('input[name=smode][value="0"]').checked=true; sleepModeUI();
+syncUI();
+showTab(TABS.includes(firstTab)?firstTab:'telas');
+api('/api/state').then(s=>{
+  setOnline(true); showRobot(s); fillSettings(s);
+  api('/api/time',{t:Math.floor(Date.now()/1000),tz:new Date().getTimezoneOffset()}).then(showRobot).catch(()=>{});  // give the robot the phone's clock
+  setInterval(()=>api('/api/state').then(showRobot).catch(lost),3000);
+}).catch(()=>{});
+
+setInterval(()=>{
+  const now=millis();
+  for(const s of screens) s.step(now);
+  if(lab.dirty){ lab.dirty=false; syncFromEngine(); }
+},40);
+</script>
