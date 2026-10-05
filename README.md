@@ -64,6 +64,18 @@ Cada tela é só um punhado de números (formato dos olhos, humor, para onde olh
 - **Chacoalhar**: fica tonto (olhos em espiral) e depois bravo e suando.
 - **Sono**: dorme depois de um tempo parado, só à noite ou nunca. Dormindo, um toque canta canção de ninar e 3 toques rápidos acordam.
 
+## Mais animações
+
+Também gravadas direto da tela do robô.
+
+<table>
+<tr><td align="center" width="33%"><img src="docs/animacoes/abertura.gif" width="230" alt="✨ Abertura"><br><b>✨ Abertura</b><br><sub>com a contagem 3-2-1 do modo vídeo</sub></td><td align="center" width="33%"><img src="docs/animacoes/piada.gif" width="230" alt="🤡 Piada"><br><b>🤡 Piada</b><br><sub>pergunta, suspense, susto ou espanto e gargalhada</sub></td><td align="center" width="33%"><img src="docs/animacoes/festa.gif" width="230" alt="🎉 Festa de chegada"><br><b>🎉 Festa de chegada</b><br><sub>quando você entra no quarto</sub></td></tr>
+<tr><td align="center" width="33%"><img src="docs/animacoes/clima.gif" width="230" alt="🌦️ Clima"><br><b>🌦️ Clima</b><br><sub>previsão do dia e o comentário dele</sub></td><td align="center" width="33%"><img src="docs/animacoes/musica.gif" width="230" alt="🎶 Música com coreografia"><br><b>🎶 Música com coreografia</b><br><sub>dança no tempo de cada batida</sub></td><td align="center" width="33%"><img src="docs/animacoes/modo-musica.gif" width="230" alt="🎧 Modo música"><br><b>🎧 Modo música</b><br><sub>dança e mostra as frequências da música do celular</sub></td></tr>
+<tr><td align="center" width="33%"><img src="docs/animacoes/pomodoro.gif" width="230" alt="🍅 Pomodoro"><br><b>🍅 Pomodoro</b><br><sub>foco de 25 min com ele concentrado</sub></td><td align="center" width="33%"><img src="docs/animacoes/como-foi-seu-dia.gif" width="230" alt="🙂 Como foi seu dia?"><br><b>🙂 Como foi seu dia?</b><br><sub>responde com 1, 2 ou 3 toques</sub></td><td align="center" width="33%"><img src="docs/animacoes/agua.gif" width="230" alt="💧 Lembrete de água"><br><b>💧 Lembrete de água</b><br><sub>um toque = bebi</sub></td></tr>
+<tr><td align="center" width="33%"><img src="docs/animacoes/contagem.gif" width="230" alt="📅 Contagem regressiva"><br><b>📅 Contagem regressiva</b><br><sub>dias que faltam para uma data</sub></td><td align="center" width="33%"><img src="docs/animacoes/qr-code.gif" width="230" alt="🔳 QR code"><br><b>🔳 QR code</b><br><sub>abre a página dele no celular</sub></td><td align="center" width="33%"><img src="docs/animacoes/relogio.gif" width="230" alt="🕒 Relógio"><br><b>🕒 Relógio</b><br><sub>hora grande e data</sub></td></tr>
+<tr><td align="center" width="33%"><img src="docs/animacoes/carinho.gif" width="230" alt="🥰 Carinho"><br><b>🥰 Carinho</b><br><sub>coraçõezinhos e bochechas coradas</sub></td><td align="center" width="33%"><img src="docs/animacoes/tonto-e-bravo.gif" width="230" alt="😵 Tonto e bravo"><br><b>😵 Tonto e bravo</b><br><sub>depois de um chacoalhão</sub></td></tr>
+</table>
+
 ## Carinho, humor e personalidade
 
 - O **coração** vai de 0 a 100%: carinho e toques enchem, o tempo e chacoalhões esvaziam. Abaixo de 30% ele fica **carente**: coração vazio, pede carinho e **não obedece** ninguém até ganhar um carinho longo. Abaixo de 10% ele chora. O "modo carente" pode ser desligado.
@@ -71,21 +83,16 @@ Cada tela é só um punhado de números (formato dos olhos, humor, para onde olh
 - **Diário**: carinhos, tempo de carinho, toques, jogos, piadas, pomodoros, copos de água, humor do dia e coração médio, 7 dias.
 - **Piadas**: ele encena (pergunta, suspense, susto ou espanto, risada). A IA do app troca as já contadas por novas, e 3 vezes por dia ele conta uma quando você está no quarto.
 
-## Jogos
+## Mini jogos
 
-| | Jogo | Como jogar |
-|---|---|---|
-| ⚡ | **Reflexo** | 3, 2, 1… toque quando aparecer o ! |
-| 🎶 | **Genius** | Repita: toque = curto, segure = longo |
-| 🔢 | **Adivinha** | Ele pensou de 1 a 10: responda com toques |
-| ✊ | **Jokenpô** | 1 toque pedra, 2 papel, 3 tesoura |
-| 🦖 | **Dino** | Pule cactos e aves baixas; ave alta: fique no chão |
-| 🌙 | **Pouso** | Segure para ligar o motor e pouse devagar |
-| 🎯 | **Alvo** | Toque quando a barra estiver no meio |
-| ⏱️ | **Cronômetro** | Conte o tempo de cabeça e toque quando passar |
-| 🐍 | **Snake** | Toque = vira à direita, segure = à esquerda |
-| 🎲 | **Dado** | Chacoalhe ou toque para jogar o dado |
-| 🎰 | **Caça-níquel** | Toque para girar e toque para parar cada rolo |
+Gravados direto da tela do robô.
+
+<table>
+<tr><td align="center" width="33%"><img src="docs/jogos/reflexo.gif" width="230" alt="⚡ Reflexo"><br><b>⚡ Reflexo</b><br><sub>3, 2, 1… toque quando aparecer o !</sub></td><td align="center" width="33%"><img src="docs/jogos/genius.gif" width="230" alt="🎶 Genius"><br><b>🎶 Genius</b><br><sub>Repita: toque = curto, segure = longo</sub></td><td align="center" width="33%"><img src="docs/jogos/adivinha.gif" width="230" alt="🔢 Adivinha"><br><b>🔢 Adivinha</b><br><sub>Ele pensou de 1 a 10: responda com toques</sub></td></tr>
+<tr><td align="center" width="33%"><img src="docs/jogos/jokenpo.gif" width="230" alt="✊ Jokenpô"><br><b>✊ Jokenpô</b><br><sub>1 toque pedra, 2 papel, 3 tesoura</sub></td><td align="center" width="33%"><img src="docs/jogos/dino.gif" width="230" alt="🦖 Dino"><br><b>🦖 Dino</b><br><sub>Pule cactos e aves baixas; ave alta: fique no chão</sub></td><td align="center" width="33%"><img src="docs/jogos/pouso.gif" width="230" alt="🌙 Pouso"><br><b>🌙 Pouso</b><br><sub>Segure para ligar o motor e pouse devagar</sub></td></tr>
+<tr><td align="center" width="33%"><img src="docs/jogos/alvo.gif" width="230" alt="🎯 Alvo"><br><b>🎯 Alvo</b><br><sub>Toque quando a barra estiver no meio</sub></td><td align="center" width="33%"><img src="docs/jogos/cronometro.gif" width="230" alt="⏱️ Cronômetro"><br><b>⏱️ Cronômetro</b><br><sub>Conte o tempo de cabeça e toque quando passar</sub></td><td align="center" width="33%"><img src="docs/jogos/snake.gif" width="230" alt="🐍 Snake"><br><b>🐍 Snake</b><br><sub>Toque = vira à direita, segure = à esquerda</sub></td></tr>
+<tr><td align="center" width="33%"><img src="docs/jogos/dado.gif" width="230" alt="🎲 Dado"><br><b>🎲 Dado</b><br><sub>Chacoalhe ou toque para jogar o dado</sub></td><td align="center" width="33%"><img src="docs/jogos/caca-niquel.gif" width="230" alt="🎰 Caça-níquel"><br><b>🎰 Caça-níquel</b><br><sub>Toque para girar e toque para parar cada rolo</sub></td></tr>
+</table>
 
 Durante um jogo nada mais funciona (comandos, cenas, chacoalhar). Perdeu: **GAME OVER**. 10 s sem jogar, ele sai. Os recordes ficam salvos.
 
