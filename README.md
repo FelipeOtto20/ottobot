@@ -21,7 +21,7 @@ Um robozinho de mesa emocional: dois olhos animados numa telinha OLED, um sensor
 |---|---|
 | 🎭 **43 telas** | caras e animações que ele sorteia sozinho (você escolhe quais no app) |
 | 🥰 **Carinho** | segurar a cabeça dele = carinho; o "coração" esvazia com o tempo e ele fica carente |
-| 🎮 **11 jogos** | jogados com toques na cabeça (e alguns chacoalhando) |
+| 🎮 **12 jogos** | jogados com toques na cabeça (e alguns chacoalhando) |
 | 🎶 **10 musiquinhas** | com coreografia no tempo da música |
 | 🧠 **Personalidade** | muda com o jeito que você cuida dele, dia após dia |
 | 📖 **Diário** | o que aconteceu em cada dia da semana, com gráfico no app |
@@ -91,7 +91,7 @@ Gravados direto da tela do robô.
 <tr><td align="center" width="33%"><img src="docs/jogos/reflexo.gif" width="200" alt="⚡ Reflexo"><br><b>⚡ Reflexo</b><br><sub>3, 2, 1… toque quando aparecer o !</sub></td><td align="center" width="33%"><img src="docs/jogos/genius.gif" width="200" alt="🎶 Genius"><br><b>🎶 Genius</b><br><sub>Repita: toque = curto, segure = longo</sub></td><td align="center" width="33%"><img src="docs/jogos/adivinha.gif" width="200" alt="🔢 Adivinha"><br><b>🔢 Adivinha</b><br><sub>Ele pensou de 1 a 10: responda com toques</sub></td></tr>
 <tr><td align="center" width="33%"><img src="docs/jogos/jokenpo.gif" width="200" alt="✊ Jokenpô"><br><b>✊ Jokenpô</b><br><sub>1 toque pedra, 2 papel, 3 tesoura</sub></td><td align="center" width="33%"><img src="docs/jogos/dino.gif" width="200" alt="🦖 Dino"><br><b>🦖 Dino</b><br><sub>Pule cactos e aves baixas; ave alta: fique no chão</sub></td><td align="center" width="33%"><img src="docs/jogos/pouso.gif" width="200" alt="🌙 Pouso"><br><b>🌙 Pouso</b><br><sub>Segure para ligar o motor e pouse devagar</sub></td></tr>
 <tr><td align="center" width="33%"><img src="docs/jogos/alvo.gif" width="200" alt="🎯 Alvo"><br><b>🎯 Alvo</b><br><sub>Toque quando a barra estiver no meio</sub></td><td align="center" width="33%"><img src="docs/jogos/cronometro.gif" width="200" alt="⏱️ Cronômetro"><br><b>⏱️ Cronômetro</b><br><sub>Conte o tempo de cabeça e toque quando passar</sub></td><td align="center" width="33%"><img src="docs/jogos/snake.gif" width="200" alt="🐍 Snake"><br><b>🐍 Snake</b><br><sub>Toque = vira à direita, segure = à esquerda</sub></td></tr>
-<tr><td align="center" width="33%"><img src="docs/jogos/dado.gif" width="200" alt="🎲 Dado"><br><b>🎲 Dado</b><br><sub>Chacoalhe ou toque para jogar o dado</sub></td><td align="center" width="33%"><img src="docs/jogos/caca-niquel.gif" width="200" alt="🎰 Caça-níquel"><br><b>🎰 Caça-níquel</b><br><sub>Toque para girar e toque para parar cada rolo</sub></td></tr>
+<tr><td align="center" width="33%"><img src="docs/jogos/dado.gif" width="200" alt="🎲 Dado"><br><b>🎲 Dado</b><br><sub>Chacoalhe ou toque para jogar o dado</sub></td><td align="center" width="33%"><img src="docs/jogos/caca-niquel.gif" width="200" alt="🎰 Caça-níquel"><br><b>🎰 Caça-níquel</b><br><sub>Toque para girar e toque para parar cada rolo</sub></td><td align="center" width="33%"><img src="docs/jogos/cobras-e-escadas.gif" width="200" alt="🪜 Cobras e escadas"><br><b>🪜 Cobras e escadas</b><br><sub>1 toque: contra ele · 2 toques: duas pessoas · depois toque = dado</sub></td></tr>
 </table>
 
 Durante um jogo nada mais funciona (comandos, cenas, chacoalhar). Perdeu: **GAME OVER**. 10 s sem jogar, ele sai. Os recordes ficam salvos.
