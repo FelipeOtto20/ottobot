@@ -262,7 +262,7 @@ output{font:500 13px var(--f-code);text-align:right;font-variant-numeric:tabular
           <li><b>Chacoalhar</b>: balançar pros lados várias vezes (um tranco ou deitar não conta) deixa ele tonto, depois bravo.</li>
           <li><b>Deitado de lado</b> (3 s): dorme; em pé de novo, acorda.</li>
           <li><b>Pegar no colo</b> depois de um tempo parado: ele olha pra você feliz.</li>
-          <li><b>Roupas</b>: cada medalha libera uma; escolha no menu, em Roupas.</li>
+          <li><b>Acessórios</b>: cada medalha libera um, e a loja do app tem mais; escolha no menu, em Acessórios, ou no app.</li>
           <li><b>Amigos</b>: perto de outro Ottobot (no mesmo Wi-Fi), eles se cumprimentam, conversam e sentem o humor um do outro.</li>
           <li><b>Dormindo</b>: 1 toque toca canção de ninar; 3 toques rápidos acordam.</li>
           <li><b>Bravo ou tonto</b>: um toque acalma.</li>
@@ -711,8 +711,10 @@ class Screen{
 
 // A screen = numbers. Same fields the robot stores: "key,mood,flags,pos,hf,vf,wl,wr,hl,hr,radius,space,squint,act,every,fx,song"
 const ACT_LABEL=['Nenhuma','Confuso','Rir','Piscadela esquerda','Piscadela direita','Piscar','Olhar de um lado pro outro','8 direções','Dançar','Pular para qualquer lado'];
-const FX={NONE:0,LOVE:1,BLUSH:2,TEARS:3,NOTES:4,SPARKLE:5,BANG:6,QUESTION:7,ANGER:8,DIZZY:9,ZZZ:10,TWINKLE:11,HYPNO:12,SHY:13};
-const FX_LABEL=['Nenhum','Corações e bochechas','Bochechas','Lágrimas','Notas musicais','Brilhos','Exclamação !','Interrogação ?','Veia de raiva','Tonto (espirais)','Zzz','Estrelas nos cantos','Espiral nos olhos','Bochecha corada dos lados'];
+const FX={NONE:0,LOVE:1,BLUSH:2,TEARS:3,NOTES:4,SPARKLE:5,BANG:6,QUESTION:7,ANGER:8,DIZZY:9,ZZZ:10,TWINKLE:11,HYPNO:12,SHY:13,MONEY:14,STAR:15,IDEA:16,HEAT:17,COLD:18,BEACH:19,SNOW:20,SICK:21,KO:22,SULK:23,BLEP:24};  // one line: build-apk.js reads it
+const FX_LABEL=['Nenhum','Corações e bochechas','Bochechas','Lágrimas','Notas musicais','Brilhos','Exclamação !','Interrogação ?','Veia de raiva','Tonto (espirais)','Zzz','Estrelas nos cantos','Espiral nos olhos','Bochecha corada dos lados',
+  'Olhos de cifrão e moedas','Olhos de estrela','Lâmpada da ideia','Calor (suor, ondas, língua)','Frio (fumacinha, dentes)','Praia (sol, coqueiro, ondas)',
+  'Neve caindo','Resfriado (termômetro, atchim)','Nocaute (olhos em X)','Emburrado (hmpf)','Língua de fora'];
 const SONG_LABEL=['Sem música','Brilha, brilha, estrelinha','Dança'];
 const BASE={mood:DEFAULT,pos:null,idle:true,autoblink:true,curious:false,cyclops:false,sweat:false,sway:false,hf:0,vf:0,wl:36,wr:36,hl:36,hr:36,r:8,space:10,squint:0,act:0,every:0,fx:0,song:0};
 function encode(key,d){
@@ -832,7 +834,7 @@ class Ottobot extends Screen{
   }
   showDef(d,key){
     d={...BASE,...d}; const e=this.e;
-    this.baseLook(); this.shown={...d,key}; this.screenStep=0; this.dirty=true;
+    this.baseLook(); this.shown={...d,key}; this.screenStep=0; this.dirty=true; this.fxSince=millis();
     e.setWidth(d.wl,d.wr); e.setHeight(d.hl,d.hr); e.setBorderradius(d.r,d.r); e.setSpacebetween(d.space);
     e.setMood(d.mood); e.setAutoblinker(d.autoblink,3,1); e.setIdleMode(d.idle,2,1); e.setCuriosity(d.curious); e.setCyclops(d.cyclops);
     if(d.sweat) e.setSweat(1);
@@ -977,6 +979,7 @@ class Ottobot extends Screen{
     if(this.mode===M.CHEER&&now-this.since>=TM.CHEER){ if(now-this.since<TM.WIFI_OK||!this.clockKnown) this.drawWifiOk(); else this.drawClock(); return; }
     const fx=this.fxNow(now);
     if(fx===FX.DIZZY){ this.drawDizzy(now); return; }
+    if(fx>=FX.MONEY) this.drawFx(fx,now);
     const hearts=fx===FX.LOVE&&!(this.mode===M.AFTERGLOW&&now-this.since>=TM.AFTERGLOW/2);
     if(hearts&&now-this.lastSpawn>450){ this.spawn(rnd(110)+6,22,rnd(2)?P.HEART_BIG:P.HEART_SMALL); this.lastSpawn=now; }
     else if(fx===FX.ZZZ&&now-this.lastSpawn>1400){ this.spawn(86,34,P.ZED); this.lastSpawn=now; }
@@ -1004,6 +1007,34 @@ class Ottobot extends Screen{
     if(fx===FX.SHY){ const y=e.eyeLy+idiv(e.eyeLheightCurrent,3), xl=e.eyeLx-12, xr=e.eyeRx+e.eyeRwidthCurrent+3; for(let k=0;k<3;k++){ e.drawLine(xl+k*3,y+3,xl+k*3+3,y-2,1); e.drawLine(xr+k*3,y+3,xr+k*3+3,y-2,1); } }
     if((fx===FX.BANG&&idiv(now,220)%5!==4)||fx===FX.QUESTION) e.drawChar(114,Math.trunc(2+2*Math.sin(now/200)),fx===FX.BANG?'!':'?',2);
     if(fx===FX.ANGER&&Math.floor(now/300)%2) e.drawBitmap(4,3,ANGER_BMP,9,9);
+  }
+  // FW 44 effects: same drawings as drawFx() in the sketch (the sneeze and the "hmpf" come on a timer here)
+  drawFx(fx,now){
+    const e=this.e, lx=e.eyeLx, lw=e.eyeLwidthCurrent, rx=e.eyeRx, rw=e.eyeRwidthCurrent, h=e.eyeLheightDefault;
+    const cy=e.eyeLy+idiv(e.eyeLheightCurrent,2), top=cy-idiv(h,2), bottom=cy+idiv(h,2), cx=idiv(lx+(e.cyclops?lx+lw:rx+rw),2), t=now-(this.fxSince||0);
+    const R=Math.round, circle=(x,y,r)=>{ e.px(x,y-r,1); e.px(x,y+r,1); e.px(x-r,y,1); e.px(x+r,y,1); e.circleHelper(x,y,r,15,1); };
+    const star=(x,y,r)=>{ const p=[]; for(let i=0;i<10;i++){ const a=-Math.PI/2+i*Math.PI/5, rr=i%2?r*0.45:r; p.push([x+R(rr*Math.cos(a)),y+R(rr*Math.sin(a))]); }
+      for(let i=0;i<10;i++) e.fillTriangle(x,y,p[i][0],p[i][1],p[(i+1)%10][0],p[(i+1)%10][1],1); };
+    const blep=(x,y)=>{ e.hline(x-6,y,13,1); e.fillRoundRect(x-1,y+1,8,6,3,1); e.vline(x+3,y+2,3,0); };
+    if(fx===FX.MONEY||fx===FX.STAR||fx===FX.KO) for(let k=0;k<(e.cyclops?1:2);k++){
+      const x=k?rx:lx, w=k?rw:lw, ex=x+idiv(w,2), r=idiv(Math.min(w,h),2);
+      e.fillRect(x-1,top-1,w+2,h+2,0);
+      if(fx===FX.MONEY) e.drawChar(ex-10,cy-14-((idiv(now,250)+k)%2)*2,'$',4);
+      else if(fx===FX.STAR) star(ex,cy,r+R(2*Math.sin(now/180)));
+      else for(let d=-1;d<=1;d++){ e.drawLine(ex-r+3+d,cy-r+3,ex+r-3+d,cy+r-3,1); e.drawLine(ex-r+3+d,cy+r-3,ex+r-3+d,cy-r+3,1); }
+    }
+    if(fx===FX.MONEY) for(let i=0;i<5;i++){ const x=(i*37+11)%120+4, y=(idiv(now,22)+i*17)%76-8; e.fillCircle(x,y,3,1); e.vline(x,y-2,5,0); }
+    if(fx===FX.STAR) for(let i=0;i<3;i++){ const k=(idiv(now,160)+i*4)%12, sz=k<6?idiv(k,2):idiv(11-k,2), x=8+i*56, y=6+(i%2)*44; if(sz){ e.hline(x-sz,y,2*sz+1,1); e.vline(x,y-sz,2*sz+1,1); } }
+    if(fx===FX.KO) for(let i=0;i<3;i++){ const a=now/260+i*2.094; star(cx+R(34*Math.cos(a)),Math.max(top-5,4)+R(4*Math.sin(a)),3); }
+    if(fx===FX.IDEA){
+      const by=Math.max(top-10,6), lit=t>450||idiv(t,90)%2;
+      if(lit){ e.fillCircle(cx,by,6,1); for(let k=0;k<8;k++){ const a=k*Math.PI/4+now/700, r1=10+idiv(now,150)%2; e.drawLine(cx+R(8*Math.cos(a)),by+R(8*Math.sin(a)),cx+R(r1*Math.cos(a)),by+R(r1*Math.sin(a)),1); }
+        e.drawLine(cx-2,by+2,cx,by-2,0); e.drawLine(cx,by-2,cx+2,by+2,0); }
+      else circle(cx,by,6);
+      e.fillRect(cx-3,by+6,7,4,1); e.hline(cx-3,by+7,7,0);
+    }
+    if(fx===FX.SULK){ const s=t%3200; if(t>=3200&&s<900){ const px=e.eyeLx<30?108:20, r=2+idiv(s,300); e.fillCircle(px,14,r,1); e.fillCircle(px+5,12,r+1,1); e.fillCircle(px+10,15,r,1); e.print(px-4,22,'hmpf',1); } }
+    if(fx===FX.BLEP) blep(cx,Math.min(bottom+5,50));
   }
   spawn(x,y,kind){ this.parts=this.parts.filter(p=>p.alive); if(this.parts.length<10) this.parts.push({x,y,phase:kind===P.TEAR?0.5:rnd(628)/100,kind,age:0,alive:true}); }
   blush(x,y){ for(let i=0;i<3;i++) this.e.drawLine(x+i*5,y+3,x+i*5+3,y,1); }
@@ -1152,6 +1183,12 @@ const SCENES=[
   {key:'ninja',cat:'humor',name:'Ninja',desc:'Faixas bem finas e próximas, bravo, espiando pela fresta da máscara para a direita. Não pisca.',s:{mood:ANGRY,idle:false,autoblink:false,pos:E,wl:34,wr:34,hl:7,hr:7,r:2,space:4}},
   {key:'panico',cat:'anim',name:'Em pânico',desc:'Olhos altos e estreitos, quase da altura da tela, tremendo; gotas de suor escorrendo. Não pisca.',s:{idle:false,autoblink:false,wl:22,wr:22,hl:52,hr:52,r:10,space:12,hf:1,vf:1,sweat:true}},
   {key:'zen',cat:'humor',name:'Zen',desc:'Arquinhos finos "^ ^", sorrindo de olhos quase fechados, sereno e parado.',s:{mood:HAPPY,idle:false,autoblink:false,squint:12,r:18}},
+  {key:'cifrao',cat:'efeito',name:'Cifrão',desc:'Olhos de $ rindo, com moedas caindo. Aparece sozinho quando ele ganha moedas.',s:{mood:HAPPY,idle:false,autoblink:false,act:2,every:1200,fx:FX.MONEY}},
+  {key:'estrela',cat:'efeito',name:'Olhos de estrela',desc:'Os olhos viram estrelas pulsando, com brilhinhos: deslumbrado.',s:{mood:HAPPY,idle:false,autoblink:false,fx:FX.STAR}},
+  {key:'ideia',cat:'efeito',name:'Ideia!',desc:'Uma lâmpada acende em cima da cabeça, com "plim". Ele usa quando chama você para brincar.',s:{idle:false,hl:30,hr:30,r:12,fx:FX.IDEA}},
+  {key:'nocaute',cat:'efeito',name:'Nocaute',desc:'Olhos em X e estrelinhas girando; o chapéu voa. Acontece ao chacoalhar duas vezes seguidas.',s:{idle:false,autoblink:false,fx:FX.KO}},
+  {key:'emburrado',cat:'efeito',name:'Emburrado',desc:'Bravo, olhando para o lado e soltando "hmpf".',s:{mood:ANGRY,idle:false,pos:W,hl:28,hr:28,fx:FX.SULK}},
+  {key:'lingua',cat:'efeito',name:'Língua de fora',desc:'Feliz, com a pontinha da língua de fora: blep!',s:{mood:HAPPY,idle:false,fx:FX.BLEP}},
 ];
 const REACTIONS=[
   {key:'boot',name:'Ligar',desc:'Abertura OTTOBOT: tela liga como TV, letras caem e quicam, olhos abrem. Só quando liga na energia.'},
@@ -1230,7 +1267,8 @@ lab.startBoot();  // the page opens with the robot's power-on intro
 const SLIDERS=[['wl','Largura esq.',8,60],['wr','Largura dir.',8,60],['hl','Altura esq.',4,60],['hr','Altura dir.',4,60],['r','Arredondamento',0,30],['space','Espaço entre',-20,40],['squint','Abertura fixa',0,40],['hf','Tremor lateral',0,20],['vf','Tremor vertical',0,20]];
 $('#shape').insertAdjacentHTML('beforeend',SLIDERS.map(([id,label,min,max])=>`<label class="sl"><span>${label}</span><input type="range" id="${id}" min="${min}" max="${max}" step="1"><output id="${id}-o"></output></label>`).join('')+'<p class="hint">Abertura fixa 0 = normal. Acima de 0 deixa os olhos apertados.</p>');
 $('#act').innerHTML=ACT_LABEL.map((l,i)=>`<option value="${i}">${l}</option>`).join('');
-$('#fx').innerHTML=FX_LABEL.map((l,i)=>`<option value="${i}">Efeito: ${l}</option>`).join('');
+const WEATHER_FX=[FX.HEAT,FX.COLD,FX.BEACH,FX.SNOW,FX.SICK];  // only the weather brings these (the robot drops them from screens)
+$('#fx').innerHTML=FX_LABEL.map((l,i)=>WEATHER_FX.includes(i)?'':`<option value="${i}">Efeito: ${l}</option>`).join('');
 $('#song').innerHTML=SONG_LABEL.map((l,i)=>`<option value="${i}">Música: ${l}</option>`).join('');
 const DIRS=[[NW,'↖','Noroeste'],[N,'↑','Norte'],[NE,'↗','Nordeste'],[W,'←','Oeste'],[CENTER,'●','Centro'],[E,'→','Leste'],[SW,'↙','Sudoeste'],[S,'↓','Sul'],[SE,'↘','Sudeste']];
 $('#dir').innerHTML=DIRS.map(([p,ch,nm])=>`<button type="button" data-pos="${p}" aria-label="Olhar para ${nm}">${ch}</button>`).join('');

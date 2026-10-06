@@ -19,17 +19,19 @@ Um robozinho de mesa emocional: dois olhos animados numa telinha OLED, um sensor
 
 | | |
 |---|---|
-| 🎭 **43 telas** | caras e animações que ele sorteia sozinho (você escolhe quais no app) |
+| 🎭 **49 telas** | caras e animações que ele sorteia sozinho (você escolhe quais no app) |
+| 👄 **Boca** | uma caixinha que se transforma em cada emoção, e o rosto inteiro balança com uma molinha (item da loja) |
 | 🥰 **Carinho** | segurar a cabeça dele = carinho; o "coração" esvazia com o tempo e ele fica carente |
-| 📋 **Menu** | 3 toques na cabeça: Jogos, Ferramentas e Roupas |
+| 🪙 **Moedas e loja** | jogos, coração cheio e conquistas dão moedas; a loja do app tem a boca, 20 acessórios e 20 músicas |
+| 📋 **Menu** | 3 toques na cabeça: Jogos, Ferramentas e Acessórios |
 | 🎮 **15 jogos** | jogados com toques na cabeça, chacoalhando ou inclinando ele |
-| 👒 **Roupinhas** | 12 acessórios (coroa, óculos, fones, cartola...): cada medalha libera um |
+| 🎩 **32 acessórios** | 12 das conquistas e 20 da loja, e eles combinam com a emoção (orelhas abaixam, auréola vira chifre, chapéu voa) |
 | 🙃 **Sente o corpo** | de cabeça pra baixo = silêncio, deitado = dorme, no colo = feliz, inclinado = acha que vai cair |
 | 🤝 **Amigos** | dois Ottobots perto um do outro se cumprimentam, conversam e sentem o humor um do outro |
-| 🎶 **10 musiquinhas** | com coreografia no tempo da música |
+| 🎶 **30 musiquinhas** | 10 de graça e 20 na loja, com coreografia no tempo da música |
 | 🧠 **Personalidade** | muda com o jeito que você cuida dele, dia após dia |
 | 📖 **Diário** | o que aconteceu em cada dia da semana, com gráfico no app |
-| 🌦️ **Clima** | previsão do dia desenhada na tela, e avisa quando vai chover |
+| 🌦️ **Clima** | previsão do dia desenhada na tela, avisa quando vai chover, e o tempo muda a cara dele (calor, praia, frio, resfriado, neve) |
 | 🍅 **Pomodoro** | 25 min de foco com ele quietinho, depois pausa |
 | 💬 **Conversa com IA** | pelo app (Gemini grátis): ele responde e faz animações, caras e músicas |
 | 📡 **Sabe quando você chega** | o app escuta o Bluetooth dele; festa quando você entra no quarto |
@@ -52,7 +54,9 @@ Cada tela é só um punhado de números (formato dos olhos, humor, para onde olh
 <tr><td align="center"><img src="docs/telas/pensando.gif" width="160" alt="Pensando"><br><sub><b>Pensando</b></sub></td><td align="center"><img src="docs/telas/furioso.gif" width="160" alt="Furioso"><br><sub><b>Furioso</b></sub></td><td align="center"><img src="docs/telas/tonto.gif" width="160" alt="Tonto"><br><sub><b>Tonto</b></sub></td><td align="center"><img src="docs/telas/furia.gif" width="160" alt="Fúria"><br><sub><b>Fúria</b></sub></td></tr>
 <tr><td align="center"><img src="docs/telas/brilhando.gif" width="160" alt="Brilhando"><br><sub><b>Brilhando</b></sub></td><td align="center"><img src="docs/telas/oops.gif" width="160" alt="Oops!"><br><sub><b>Oops!</b></sub></td><td align="center"><img src="docs/telas/suspeito.gif" width="160" alt="Suspeito"><br><sub><b>Suspeito</b></sub></td><td align="center"><img src="docs/telas/hipnotizado.gif" width="160" alt="Hipnotizado"><br><sub><b>Hipnotizado</b></sub></td></tr>
 <tr><td align="center"><img src="docs/telas/scanner.gif" width="160" alt="Scanner"><br><sub><b>Scanner</b></sub></td><td align="center"><img src="docs/telas/festeiro.gif" width="160" alt="Festeiro"><br><sub><b>Festeiro</b></sub></td><td align="center"><img src="docs/telas/timido.gif" width="160" alt="Tímido"><br><sub><b>Tímido</b></sub></td><td align="center"><img src="docs/telas/bugado.gif" width="160" alt="Bugado"><br><sub><b>Bugado</b></sub></td></tr>
-<tr><td align="center"><img src="docs/telas/ninja.gif" width="160" alt="Ninja"><br><sub><b>Ninja</b></sub></td><td align="center"><img src="docs/telas/panico.gif" width="160" alt="Em pânico"><br><sub><b>Em pânico</b></sub></td><td align="center"><img src="docs/telas/zen.gif" width="160" alt="Zen"><br><sub><b>Zen</b></sub></td></tr>
+<tr><td align="center"><img src="docs/telas/ninja.gif" width="160" alt="Ninja"><br><sub><b>Ninja</b></sub></td><td align="center"><img src="docs/telas/panico.gif" width="160" alt="Em pânico"><br><sub><b>Em pânico</b></sub></td><td align="center"><img src="docs/telas/zen.gif" width="160" alt="Zen"><br><sub><b>Zen</b></sub></td><td align="center"><img src="docs/telas/cifrao.gif" width="160" alt="Cifrão"><br><sub><b>Cifrão</b></sub></td></tr>
+<tr><td align="center"><img src="docs/telas/estrela.gif" width="160" alt="Olhos de estrela"><br><sub><b>Olhos de estrela</b></sub></td><td align="center"><img src="docs/telas/ideia.gif" width="160" alt="Ideia!"><br><sub><b>Ideia!</b></sub></td><td align="center"><img src="docs/telas/nocaute.gif" width="160" alt="Nocaute"><br><sub><b>Nocaute</b></sub></td><td align="center"><img src="docs/telas/emburrado.gif" width="160" alt="Emburrado"><br><sub><b>Emburrado</b></sub></td></tr>
+<tr><td align="center"><img src="docs/telas/lingua.gif" width="160" alt="Língua de fora"><br><sub><b>Língua de fora</b></sub></td></tr>
 </table>
 
 ## Reações e cenas do dia
@@ -65,16 +69,34 @@ Cada tela é só um punhado de números (formato dos olhos, humor, para onde olh
 
 - **Toques rápidos**: cada quantidade (1 a 8 toques) faz o que você escolher no app. Padrão: 1 = alegria, 2 = dança, 3 = menu, 5 = hora, 6 = QR code da página.
 - **Segurar**: carinho. Quanto mais tempo, mais derretido: "^ ^", olhos de coração, nas nuvens (com brilhos e notinhas).
-- **Chacoalhar** (balançar pros lados várias vezes; um tranco ou deitar não conta): fica tonto (olhos em espiral) e depois bravo e suando.
+- **Chacoalhar** (balançar pros lados várias vezes; um tranco ou deitar não conta): fica tonto (olhos em espiral) e depois bravo e suando. Duas vezes seguidas: **nocaute** (olhos em X, estrelinhas girando e o chapéu voa).
 - **Sono**: dorme depois de um tempo parado, só à noite ou nunca. Dormindo, um toque canta canção de ninar e 3 toques rápidos acordam.
 
-## Menu, roupas e gestos
+## Boca, clima no rosto e acessórios
+
+Gravados direto da tela do robô.
 
 <table>
-<tr><td align="center" width="33%"><img src="docs/novidades/menu.gif" width="200" alt="📋 Menu"><br><b>📋 Menu</b><br><sub>3 toques abrem; toque desce, segure até apitar e solte para escolher</sub></td><td align="center" width="33%"><img src="docs/novidades/roupas.gif" width="200" alt="👒 Roupas"><br><b>👒 Roupas</b><br><sub>experimente no rosto dele; as trancadas mostram a medalha que libera</sub></td><td align="center" width="33%"><img src="docs/novidades/atualizando.gif" width="200" alt="📡 Atualizando"><br><b>📡 Atualizando</b><br><sub>a tela durante uma atualização pelo Wi-Fi</sub></td></tr>
+<tr><td align="center" width="33%"><img src="docs/novidades/boca.gif" width="200" alt="👄 Boca"><br><b>👄 Boca</b><br><sub>canta, fala, sorri, fica triste, bravo, faz "o" e mostra a língua; o rosto balança com uma molinha</sub></td><td align="center" width="33%"><img src="docs/novidades/clima-no-rosto.gif" width="200" alt="🌡️ Clima no rosto"><br><b>🌡️ Clima no rosto</b><br><sub>calor, praia, frio, resfriado (atchim!) e neve: só quando o tempo pede</sub></td><td align="center" width="33%"><img src="docs/novidades/acessorios.gif" width="200" alt="🎩 Acessórios que sentem"><br><b>🎩 Acessórios que sentem</b><br><sub>a nuvem vira sol ou chove forte, orelhas abaixam, auréola vira chifre, o chapéu voa no nocaute</sub></td></tr>
 </table>
 
-- **Menu** (3 toques, dá para trocar no app): **Jogos** (com o seu recorde embaixo de cada um), **Ferramentas** (relógio, cronômetro, pomodoro, clima, dado), **Roupas** e **Sair**. Um jogo aberto pelo menu volta para ele quando acaba, ganhando ou perdendo; só sai do menu em "Sair".
+- **Boca** (comprada na loja, liga e desliga no app): uma caixinha que muda de tamanho e escorrega de uma forma para outra, com pontinhas que sobem no sorriso e descem na tristeza. Ela segue tudo: o humor dos olhos, cada nota que toca, as falas, o sono, o susto e o carinho.
+- **Clima no rosto**: as caras de clima não entram no rodízio de telas. O tempo traz elas: quente = calor e às vezes praia (com óculos escuros), frio = congelando e às vezes resfriado, nevando = neve (com gorro e cachecol). A IA do app comenta.
+- **Emoções novas**: cifrão (quando ganha moedas), olhos de estrela, ideia (a lâmpada acende quando ele chama para brincar), nocaute, emburrado ("hmpf") e língua de fora.
+
+## Moedas e loja
+
+- **Ganhar**: jogos (até 20 moedas por partida e +10 ao bater um recorde, até 150 por dia), coração cheio com carinho (+30, uma vez por dia) e cada conquista (+50). Ele faz olhos de cifrão quando ganha.
+- **Loja** (aba Loja do app): a boca (800), 20 acessórios de 250 a 1200 (tapa-olho de pirata, bruxa, viking, astronauta, nuvem de chuva, sobrancelhas que mudam com o humor, bigode, herói...) e 20 músicas clássicas de 150 a 350. Dá para provar no robô antes de comprar, e tudo fica salvo nele.
+- **Caça-níquel** aposta 10 moedas de verdade: 7 7 7 paga 350 (raro!), trios de 30 a 120, dois 7 = 50, outro par = 12, um 7 sozinho devolve a aposta.
+
+## Menu, acessórios e gestos
+
+<table>
+<tr><td align="center" width="33%"><img src="docs/novidades/menu.gif" width="200" alt="📋 Menu"><br><b>📋 Menu</b><br><sub>3 toques abrem; toque desce, segure até apitar e solte para escolher</sub></td><td align="center" width="33%"><img src="docs/novidades/roupas.gif" width="200" alt="🎩 Acessórios"><br><b>🎩 Acessórios</b><br><sub>experimente no rosto dele; os trancados mostram a medalha que libera</sub></td><td align="center" width="33%"><img src="docs/novidades/atualizando.gif" width="200" alt="📡 Atualizando"><br><b>📡 Atualizando</b><br><sub>a tela durante uma atualização pelo Wi-Fi</sub></td></tr>
+</table>
+
+- **Menu** (3 toques, dá para trocar no app): **Jogos** (com o seu recorde embaixo de cada um), **Ferramentas** (relógio, cronômetro, pomodoro, clima, dado), **Acessórios** (os das conquistas e os comprados) e **Sair**. Quando um jogo acaba ele volta para o rostinho.
 - **De cabeça pra baixo** (1,5 s): liga ou desliga o silêncio.
 - **Deitado de lado** (3 s): boceja e dorme; em pé de novo, acorda.
 - **No colo** depois de um tempo parado: olha pra você feliz, com coraçõezinhos.
@@ -98,7 +120,7 @@ Também gravadas direto da tela do robô.
 - O **coração** vai de 0 a 100%: carinho e toques enchem, o tempo e chacoalhões esvaziam. Abaixo de 30% ele fica **carente**: coração vazio, pede carinho e **não obedece** ninguém até ganhar um carinho longo. Abaixo de 10% ele chora. O "modo carente" pode ser desligado.
 - **Personalidade**: todo dia o dia anterior empurra um pouco. Muito carinho deixa ele **carinhoso** (o coração esvazia mais devagar e ele diz que gosta de você); muitos jogos e toques, **brincalhão** (chama para jogar); esquecido fica **carente**; dias quietos, **calmo**.
 - **Diário**: carinhos, tempo de carinho, toques, jogos, piadas, pomodoros, copos de água, humor do dia e coração médio, 7 dias.
-- **Piadas**: ele encena (pergunta, suspense, susto ou espanto, risada). A IA do app troca as já contadas por novas, e 3 vezes por dia ele conta uma quando você está no quarto.
+- **Piadas**: ele encena (pergunta, suspense, susto ou espanto, risada). Ele guarda 20; a IA do app troca as já contadas por novas, com trocadilhos que funcionam em português, e uma segunda IA faz de crítica e só deixa passar as boas. 3 vezes por dia ele conta uma quando você está no quarto.
 
 ## Mini jogos
 
@@ -108,11 +130,11 @@ Gravados direto da tela do robô.
 <tr><td align="center" width="33%"><img src="docs/jogos/reflexo.gif" width="200" alt="⚡ Reflexo"><br><b>⚡ Reflexo</b><br><sub>3, 2, 1… toque quando aparecer o !</sub></td><td align="center" width="33%"><img src="docs/jogos/genius.gif" width="200" alt="🎶 Genius"><br><b>🎶 Genius</b><br><sub>Repita: toque = curto, segure = longo</sub></td><td align="center" width="33%"><img src="docs/jogos/adivinha.gif" width="200" alt="🔢 Adivinha"><br><b>🔢 Adivinha</b><br><sub>Ele pensou de 1 a 10: responda com toques</sub></td></tr>
 <tr><td align="center" width="33%"><img src="docs/jogos/jokenpo.gif" width="200" alt="✊ Jokenpô"><br><b>✊ Jokenpô</b><br><sub>1 toque pedra, 2 papel, 3 tesoura</sub></td><td align="center" width="33%"><img src="docs/jogos/dino.gif" width="200" alt="🦖 Dino"><br><b>🦖 Dino</b><br><sub>Pule cactos e aves baixas; ave alta: fique no chão</sub></td><td align="center" width="33%"><img src="docs/jogos/pouso.gif" width="200" alt="🌙 Pouso"><br><b>🌙 Pouso</b><br><sub>Segure para ligar o motor e pouse devagar</sub></td></tr>
 <tr><td align="center" width="33%"><img src="docs/jogos/alvo.gif" width="200" alt="🎯 Alvo"><br><b>🎯 Alvo</b><br><sub>Toque quando a barra estiver no meio</sub></td><td align="center" width="33%"><img src="docs/jogos/cronometro.gif" width="200" alt="⏱️ Cronômetro"><br><b>⏱️ Cronômetro</b><br><sub>Conte o tempo de cabeça e toque quando passar</sub></td><td align="center" width="33%"><img src="docs/jogos/snake.gif" width="200" alt="🐍 Snake"><br><b>🐍 Snake</b><br><sub>Toque = vira à direita, segure = à esquerda</sub></td></tr>
-<tr><td align="center" width="33%"><img src="docs/jogos/dado.gif" width="200" alt="🎲 Dado"><br><b>🎲 Dado</b><br><sub>Chacoalhe ou toque para jogar o dado</sub></td><td align="center" width="33%"><img src="docs/jogos/caca-niquel.gif" width="200" alt="🎰 Caça-níquel"><br><b>🎰 Caça-níquel</b><br><sub>Toque para girar e toque para parar cada rolo</sub></td><td align="center" width="33%"><img src="docs/jogos/cobras-e-escadas.gif" width="200" alt="🪜 Cobras e escadas"><br><b>🪜 Cobras e escadas</b><br><sub>1 toque: contra ele · 2 toques: duas pessoas · depois toque = dado</sub></td></tr>
+<tr><td align="center" width="33%"><img src="docs/jogos/dado.gif" width="200" alt="🎲 Dado"><br><b>🎲 Dado</b><br><sub>Chacoalhe ou toque para jogar o dado</sub></td><td align="center" width="33%"><img src="docs/jogos/caca-niquel.gif" width="200" alt="🎰 Caça-níquel"><br><b>🎰 Caça-níquel</b><br><sub>Aposta 10 moedas: 7 7 7 = 350, trios 30 a 120, par 12</sub></td><td align="center" width="33%"><img src="docs/jogos/cobras-e-escadas.gif" width="200" alt="🪜 Cobras e escadas"><br><b>🪜 Cobras e escadas</b><br><sub>1 toque: contra ele · 2 toques: duas pessoas · depois toque = dado</sub></td></tr>
 <tr><td align="center" width="33%"><img src="docs/jogos/flappy.gif" width="200" alt="🐦 Flappy"><br><b>🐦 Flappy</b><br><sub>Toque para bater as asas e passe entre os canos</sub></td><td align="center" width="33%"><img src="docs/jogos/torre.gif" width="200" alt="🧱 Torre"><br><b>🧱 Torre</b><br><sub>Toque para soltar o bloco bem em cima da torre</sub></td><td align="center" width="33%"><b>🌀 Labirinto</b><br><sub>Incline o robô para rolar a bolinha até o buraco, contra o tempo; cada fase é um labirinto maior</sub></td></tr>
 </table>
 
-Durante um jogo nada mais funciona (comandos, cenas, chacoalhar). Perdeu: **GAME OVER**. 10 s sem jogar, ele sai. Os recordes ficam salvos. Aberto pelo menu, o jogo volta para o menu quando acaba.
+Durante um jogo nada mais funciona (comandos, cenas, chacoalhar). **Segure a cabeça 3 s para sair** (aparece a dica e uma barrinha; no Pouso segurar é o motor, então ele sai quando a nave bate). Perdeu: **GAME OVER** e volta para o rostinho; nenhum jogo recomeça sozinho. 10 s sem jogar, ele sai. Os recordes ficam salvos e as partidas dão moedas.
 
 ## Musiquinhas e dança
 
@@ -129,11 +151,13 @@ Durante um jogo nada mais funciona (comandos, cenas, chacoalhar). Perdeu: **GAME
 | 🌙 | Soninho | 0:48 |
 | 🎉 | Festa 8-bit | 0:51 |
 
+Mais 20 na loja do app, todas de domínio público: Bate o sino, Noite feliz, Cancan, Marcha turca, Danúbio azul, Lago dos cisnes, Guilherme Tell, The Entertainer, Canon em Ré, Frère Jacques, La cucaracha, Os santos, Greensleeves, Marcha nupcial, Oh! Susana, Ninar de Brahms, Pequena serenata, Minueto em Sol, Rema rema e Primavera.
+
 A coreografia é calculada no app para o tempo exato de cada batida e o robô dança no mesmo relógio da música: pulinhos no tempo forte, olhos seguindo a melodia (nota aguda olha para cima), giros, piscadas, olhos crescendo, efeitos que trocam a cada 2 compassos e olhos de coração no fim. Também tem **modo música**: o celular escuta a música que está tocando (pelo microfone) e ele dança mostrando as frequências. Volume do bipe ajustável no app.
 
 ## Companhia no dia a dia
 
-- 🌦️ **Clima** (só no Wi-Fi de casa): [Open-Meteo](https://open-meteo.com/), sem chave. Cidade escolhida no app ou descoberta pela internet. Mostra de manhã, quando vai chover e umas 2 vezes por dia.
+- 🌦️ **Clima** (só no Wi-Fi de casa): [Open-Meteo](https://open-meteo.com/), sem chave. Cidade escolhida no app ou descoberta pela internet. Mostra de manhã, quando vai chover e umas 2 vezes por dia. Em dia quente ele fica com calor (e às vezes sonha com a praia), no frio treme (e às vezes pega um resfriado), e com neve olha os flocos caindo.
 - 🍅 **Pomodoro**: 25 min de foco (ele fica quieto e concentrado; um toque dá um incentivo), 5 min de pausa (15 a cada 4 rodadas) e depois chama você de volta.
 - 🙂 **"Como foi seu dia?"** à noite, respondido com 1, 2 ou 3 toques. 💧 **Lembrete de água** durante o dia, um toque = bebi.
 - 📅 **Contagem regressiva** para datas marcadas no app (prova, viagem, aniversário), com festa no dia.
@@ -142,7 +166,7 @@ A coreografia é calculada no app para o tempo exato de cada batida e o robô da
 
 ### Conquistas
 
-Cada medalha libera uma roupinha (menu → Roupas).
+Cada medalha libera um acessório (menu → Acessórios) e dá 50 moedas.
 
 🐻 **Abraço de urso**: um carinho longo, até ele ficar nas nuvens (uns 18 s segurando) → libera: orelhas de urso  
 ❤️ **Coração cheio**: encher o carinho dele até 100% → libera: laço  
@@ -161,8 +185,9 @@ Cada medalha libera uma roupinha (menu → Roupas).
 
 - **Início**: o rosto dele ao vivo, coração, atalhos, foco, musiquinhas, modo vídeo, jogos, diário, personalidade, conquistas, datas, cenas, caras e recado na telinha.
 - **Conversa**: IA grátis ([chave do Gemini](https://aistudio.google.com/apikey), fica só no celular). Ele responde em frases curtas, escolhe animações, inventa caras e músicas e reage quando você faz carinho nele.
+- **Loja**: moedas, a boca, acessórios e músicas para provar e comprar, e escolher o que ele usa.
 - **Perto**: radar do Bluetooth, festa quando você chega, aviso quando ele está carente, 3 piadas por dia.
-- **Ajustes**: tudo do robô (telas, toques, horários, sono, som, Wi-Fi, senha, lembretes, clima, atualizações).
+- **Ajustes**: tudo do robô (telas, toques, horários, sono, som, Wi-Fi, senha, lembretes, clima) e as atualizações, com as etapas e a porcentagem na tela.
 
 Instale pelo arquivo `ottobot.apk` da [última versão](https://github.com/FelipeOtto20/ottobot/releases/latest) ou pela página do robô (`http://ottobot.local`). Android 12 ou mais novo. Quando sai uma versão nova aqui, o app avisa e atualiza o robô e ele mesmo.
 
@@ -191,7 +216,7 @@ Bibliotecas: Adafruit SSD1306 e GFX, [FluxGarage RoboEyes](https://github.com/Fl
 1. Conecte o celular no Wi-Fi **Ottobot** (senha padrão `ottobot1`; troque no app) e a página abre sozinha, ou abra `http://192.168.4.1`.
 2. Pela página ou pelo app, coloque o robô no Wi-Fi de casa: aí é só abrir `http://ottobot.local` sem sair da sua internet.
 
-Para quem quiser mexer, o robô tem uma API HTTP simples: `/api/state`, `/api/config`, `/api/do`, `/api/show`, `/api/say`, `/api/song`, `/api/diary`, `/api/jokes`, `/api/update`.
+Para quem quiser mexer, o robô tem uma API HTTP simples: `/api/state`, `/api/config`, `/api/do`, `/api/show`, `/api/say`, `/api/song`, `/api/diary`, `/api/jokes`, `/api/buy`, `/api/update`.
 
 ## Créditos e direitos
 
