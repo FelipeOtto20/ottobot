@@ -21,7 +21,12 @@ Um robozinho de mesa emocional: dois olhos animados numa telinha OLED, um sensor
 |---|---|
 | 🎭 **43 telas** | caras e animações que ele sorteia sozinho (você escolhe quais no app) |
 | 🥰 **Carinho** | segurar a cabeça dele = carinho; o "coração" esvazia com o tempo e ele fica carente |
-| 🎮 **14 jogos** | jogados com toques na cabeça (e alguns chacoalhando) |
+| 📋 **Menu** | 3 toques na cabeça: Jogos, Ferramentas e Roupas |
+| 🎮 **15 jogos** | jogados com toques na cabeça, chacoalhando ou inclinando ele |
+| 👒 **Roupinhas** | 12 acessórios (coroa, óculos, fones, cartola...): cada medalha libera um |
+| 🙃 **Sente o corpo** | de cabeça pra baixo = silêncio, deitado = dorme, no colo = feliz, inclinado = acha que vai cair |
+| 📲 **Notificações** | mensagem no WhatsApp ou Instagram aparece na telinha (opção no app) |
+| 🤝 **Amigos** | dois Ottobots perto um do outro se cumprimentam, conversam e sentem o humor um do outro |
 | 🎶 **10 musiquinhas** | com coreografia no tempo da música |
 | 🧠 **Personalidade** | muda com o jeito que você cuida dele, dia após dia |
 | 📖 **Diário** | o que aconteceu em cada dia da semana, com gráfico no app |
@@ -59,10 +64,23 @@ Cada tela é só um punhado de números (formato dos olhos, humor, para onde olh
 <tr><td align="center"><img src="docs/reacoes/sunrise.gif" width="160" alt="Bom dia"><br><sub><b>Bom dia</b></sub></td><td align="center"><img src="docs/reacoes/noon.gif" width="160" alt="Meio-dia"><br><sub><b>Meio-dia</b></sub></td><td align="center"><img src="docs/reacoes/night.gif" width="160" alt="Boa noite"><br><sub><b>Boa noite</b></sub></td></tr>
 </table>
 
-- **Toques rápidos**: cada quantidade (1 a 8 toques) faz o que você escolher no app. Padrão: 1 = alegria, 2 = dança, 5 = hora, 6 = QR code da página.
+- **Toques rápidos**: cada quantidade (1 a 8 toques) faz o que você escolher no app. Padrão: 1 = alegria, 2 = dança, 3 = menu (fixo), 5 = hora, 6 = QR code da página.
 - **Segurar**: carinho. Quanto mais tempo, mais derretido: "^ ^", olhos de coração, nas nuvens (com brilhos e notinhas).
-- **Chacoalhar**: fica tonto (olhos em espiral) e depois bravo e suando.
+- **Chacoalhar** (balançar pros lados várias vezes; um tranco ou deitar não conta): fica tonto (olhos em espiral) e depois bravo e suando.
 - **Sono**: dorme depois de um tempo parado, só à noite ou nunca. Dormindo, um toque canta canção de ninar e 3 toques rápidos acordam.
+
+## Menu, roupas e gestos
+
+<table>
+<tr><td align="center" width="25%"><img src="docs/novidades/menu.gif" width="200" alt="📋 Menu"><br><b>📋 Menu</b><br><sub>3 toques abrem; toque desce, segure até apitar e solte para escolher</sub></td><td align="center" width="25%"><img src="docs/novidades/roupas.gif" width="200" alt="👒 Roupas"><br><b>👒 Roupas</b><br><sub>experimente no rosto dele; as trancadas mostram a medalha que libera</sub></td><td align="center" width="25%"><img src="docs/novidades/notificacao.gif" width="200" alt="📲 Notificações"><br><b>📲 Notificações</b><br><sub>WhatsApp e Instagram, com ou sem o nome de quem mandou</sub></td><td align="center" width="25%"><img src="docs/novidades/atualizando.gif" width="200" alt="📡 Atualizando"><br><b>📡 Atualizando</b><br><sub>a tela durante uma atualização pelo Wi-Fi</sub></td></tr>
+</table>
+
+- **Menu** (3 toques): **Jogos** (com o seu recorde embaixo de cada um), **Ferramentas** (relógio, cronômetro, pomodoro, clima, dado), **Roupas** e **Sair**. Um jogo aberto pelo menu volta para ele quando acaba, ganhando ou perdendo; só sai do menu em "Sair".
+- **De cabeça pra baixo** (1,5 s): liga ou desliga o silêncio.
+- **Deitado de lado** (3 s): boceja e dorme; em pé de novo, acorda.
+- **No colo** depois de um tempo parado: olha pra você feliz, com coraçõezinhos.
+- **Inclinado pro lado**: acha que vai cair. Olhos arregalados e tremendo escorregam para o lado mais baixo, ele grita e as letras do grito caem com a gravidade. Reto de novo: "ufa!".
+- **Amigos**: dois Ottobots no mesmo Wi-Fi (ou os dois sem Wi-Fi de casa) se falam por ESP-NOW. Eles se cumprimentam ("oi, robô do Fulano!"), de vez em quando um pergunta e o outro responde, e um sente o humor do outro: carinho vira coraçõezinhos, chacoalhão vira "tudo bem?", sono vira bocejo.
 
 ## Mais animações
 
@@ -92,10 +110,10 @@ Gravados direto da tela do robô.
 <tr><td align="center" width="33%"><img src="docs/jogos/jokenpo.gif" width="200" alt="✊ Jokenpô"><br><b>✊ Jokenpô</b><br><sub>1 toque pedra, 2 papel, 3 tesoura</sub></td><td align="center" width="33%"><img src="docs/jogos/dino.gif" width="200" alt="🦖 Dino"><br><b>🦖 Dino</b><br><sub>Pule cactos e aves baixas; ave alta: fique no chão</sub></td><td align="center" width="33%"><img src="docs/jogos/pouso.gif" width="200" alt="🌙 Pouso"><br><b>🌙 Pouso</b><br><sub>Segure para ligar o motor e pouse devagar</sub></td></tr>
 <tr><td align="center" width="33%"><img src="docs/jogos/alvo.gif" width="200" alt="🎯 Alvo"><br><b>🎯 Alvo</b><br><sub>Toque quando a barra estiver no meio</sub></td><td align="center" width="33%"><img src="docs/jogos/cronometro.gif" width="200" alt="⏱️ Cronômetro"><br><b>⏱️ Cronômetro</b><br><sub>Conte o tempo de cabeça e toque quando passar</sub></td><td align="center" width="33%"><img src="docs/jogos/snake.gif" width="200" alt="🐍 Snake"><br><b>🐍 Snake</b><br><sub>Toque = vira à direita, segure = à esquerda</sub></td></tr>
 <tr><td align="center" width="33%"><img src="docs/jogos/dado.gif" width="200" alt="🎲 Dado"><br><b>🎲 Dado</b><br><sub>Chacoalhe ou toque para jogar o dado</sub></td><td align="center" width="33%"><img src="docs/jogos/caca-niquel.gif" width="200" alt="🎰 Caça-níquel"><br><b>🎰 Caça-níquel</b><br><sub>Toque para girar e toque para parar cada rolo</sub></td><td align="center" width="33%"><img src="docs/jogos/cobras-e-escadas.gif" width="200" alt="🪜 Cobras e escadas"><br><b>🪜 Cobras e escadas</b><br><sub>1 toque: contra ele · 2 toques: duas pessoas · depois toque = dado</sub></td></tr>
-<tr><td align="center" width="33%"><img src="docs/jogos/flappy.gif" width="200" alt="🐦 Flappy"><br><b>🐦 Flappy</b><br><sub>Toque para bater as asas e passe entre os canos</sub></td><td align="center" width="33%"><img src="docs/jogos/torre.gif" width="200" alt="🧱 Torre"><br><b>🧱 Torre</b><br><sub>Toque para soltar o bloco bem em cima da torre</sub></td><td></td></tr>
+<tr><td align="center" width="33%"><img src="docs/jogos/flappy.gif" width="200" alt="🐦 Flappy"><br><b>🐦 Flappy</b><br><sub>Toque para bater as asas e passe entre os canos</sub></td><td align="center" width="33%"><img src="docs/jogos/torre.gif" width="200" alt="🧱 Torre"><br><b>🧱 Torre</b><br><sub>Toque para soltar o bloco bem em cima da torre</sub></td><td align="center" width="33%"><b>🌀 Labirinto</b><br><sub>Incline o robô para rolar a bolinha até o buraco, contra o tempo; cada fase é um labirinto maior</sub></td></tr>
 </table>
 
-Durante um jogo nada mais funciona (comandos, cenas, chacoalhar). Perdeu: **GAME OVER**. 10 s sem jogar, ele sai. Os recordes ficam salvos.
+Durante um jogo nada mais funciona (comandos, cenas, chacoalhar). Perdeu: **GAME OVER**. 10 s sem jogar, ele sai. Os recordes ficam salvos. Aberto pelo menu, o jogo volta para o menu quando acaba.
 
 ## Musiquinhas e dança
 
@@ -125,24 +143,26 @@ A coreografia é calculada no app para o tempo exato de cada batida e o robô da
 
 ### Conquistas
 
-🐻 **Abraço de urso**: um carinho longo, até ele ficar nas nuvens (uns 18 s segurando)  
-❤️ **Coração cheio**: encher o carinho dele até 100%  
-📅 **Semana de carinho**: carinho nele 7 dias seguidos  
-🍅 **Foco de aço**: completar 10 pomodoros  
-📚 **Dia produtivo**: 4 pomodoros no mesmo dia  
-💧 **Hidratado**: 8 copos de água num dia (toque nele quando ele lembrar)  
-🤡 **Plateia fiel**: ouvir 30 piadas dele  
-🦖 **Dino veloz**: 500 pontos no Dino  
-🎶 **Memória boa**: chegar na rodada 8 do Genius  
-⚡ **Rápido como raio**: reflexo abaixo de 250 ms  
-📖 **Diário em dia**: contar como foi seu dia 5 vezes  
-🌟 **Dia completo**: no mesmo dia: carinho, jogo, pomodoro e água
+Cada medalha libera uma roupinha (menu → Roupas).
+
+🐻 **Abraço de urso**: um carinho longo, até ele ficar nas nuvens (uns 18 s segurando) → libera: orelhas de urso  
+❤️ **Coração cheio**: encher o carinho dele até 100% → libera: laço  
+📅 **Semana de carinho**: carinho nele 7 dias seguidos → libera: coroa  
+🍅 **Foco de aço**: completar 10 pomodoros → libera: óculos  
+📚 **Dia produtivo**: 4 pomodoros no mesmo dia → libera: faixa  
+💧 **Hidratado**: 8 copos de água num dia (toque nele quando ele lembrar) → libera: boné  
+🤡 **Plateia fiel**: ouvir 30 piadas dele → libera: nariz de palhaço  
+🦖 **Dino veloz**: 500 pontos no Dino → libera: óculos escuros  
+🎶 **Memória boa**: chegar na rodada 8 do Genius → libera: chapéu de mago  
+⚡ **Rápido como raio**: reflexo abaixo de 250 ms → libera: fones  
+📖 **Diário em dia**: contar como foi seu dia 5 vezes → libera: cartola  
+🌟 **Dia completo**: no mesmo dia: carinho, jogo, pomodoro e água → libera: auréola
 
 ## App Android
 
 - **Início**: o rosto dele ao vivo, coração, atalhos, foco, musiquinhas, modo vídeo, jogos, diário, personalidade, conquistas, datas, cenas, caras e recado na telinha.
 - **Conversa**: IA grátis ([chave do Gemini](https://aistudio.google.com/apikey), fica só no celular). Ele responde em frases curtas, escolhe animações, inventa caras e músicas e reage quando você faz carinho nele.
-- **Perto**: radar do Bluetooth, festa quando você chega, aviso quando ele está carente, 3 piadas por dia.
+- **Perto**: radar do Bluetooth, festa quando você chega, aviso quando ele está carente, 3 piadas por dia, notificações do WhatsApp e do Instagram na telinha (o texto da mensagem nunca sai do celular).
 - **Ajustes**: tudo do robô (telas, toques, horários, sono, som, Wi-Fi, senha, lembretes, clima, atualizações).
 
 Instale pelo arquivo `ottobot.apk` da [última versão](https://github.com/FelipeOtto20/ottobot/releases/latest) ou pela página do robô (`http://ottobot.local`). Android 12 ou mais novo. Quando sai uma versão nova aqui, o app avisa e atualiza o robô e ele mesmo.

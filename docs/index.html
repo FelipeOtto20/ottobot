@@ -249,7 +249,7 @@ output{font:500 13px var(--f-code);text-align:right;font-variant-numeric:tabular
     <div class="stack">
       <div class="box">
         <h2>Toques rápidos</h2>
-        <p class="hint">Escolha o que o Ottobot faz com cada quantidade de toques seguidos. Uma quantidade sem nada usa a menor que tiver: sem nada em 3, ele faz o de 2. <span class="offline-only">Para salvar no robô, abra esta página pelo Wi-Fi do Ottobot.</span></p>
+        <p class="hint">Escolha o que o Ottobot faz com cada quantidade de toques seguidos. Uma quantidade sem nada usa a menor que tiver: sem nada em 4, ele faz o de 2. 3 toques sempre abrem o menu. <span class="offline-only">Para salvar no robô, abra esta página pelo Wi-Fi do Ottobot.</span></p>
         <div class="tap-list" id="tapList"></div>
         <div class="row"><label for="tapAddN">Novo toque</label><select id="tapAddN"></select><button class="btn primary" id="tapAdd" type="button">Adicionar</button></div>
       </div>
@@ -257,6 +257,14 @@ output{font:500 13px var(--f-code);text-align:right;font-variant-numeric:tabular
         <h2>Sempre iguais</h2>
         <ul class="fixed">
           <li><b>Segurar</b>: carinho (olhos ^ ^, corações, ronrona).</li>
+          <li><b>3 toques</b>: menu (Jogos, Ferramentas, Roupas). Toque desce, segure até apitar e solte para escolher. Ganhou ou perdeu, volta pro menu; para sair, escolha "Sair".</li>
+          <li><b>De cabeça pra baixo</b> (1,5 s): liga ou desliga o silêncio.</li>
+          <li><b>Inclinar pro lado</b>: ele acha que vai cair, os olhos escorregam pro lado mais baixo; reto de novo, "ufa!".</li>
+          <li><b>Chacoalhar</b>: balançar pros lados várias vezes (um tranco ou deitar não conta) deixa ele tonto, depois bravo.</li>
+          <li><b>Deitado de lado</b> (3 s): dorme; em pé de novo, acorda.</li>
+          <li><b>Pegar no colo</b> depois de um tempo parado: ele olha pra você feliz.</li>
+          <li><b>Roupas</b>: cada medalha libera uma; escolha no menu, em Roupas.</li>
+          <li><b>Amigos</b>: perto de outro Ottobot (no mesmo Wi-Fi), eles se cumprimentam, conversam e sentem o humor um do outro.</li>
           <li><b>Dormindo</b>: 1 toque toca canção de ninar; 3 toques rápidos acordam.</li>
           <li><b>Bravo ou tonto</b>: um toque acalma.</li>
         </ul>
@@ -1157,7 +1165,7 @@ const REACTIONS=[
 const DEFAULT_KEYS=['padrao','feliz','cansado','confuso','rindo','estressado','piscadela','curioso','direcoes'];  // the robot's rotation until the phone changes it
 // Tap actions: built-in reactions, or "s:<key>" for a catalog screen. The robot starts with 1 = joy, 2 = dance, 5 = clock.
 const SCENE_ACTIONS=[['sunrise','Nascer do sol'],['noon','Meio-dia'],['night','Noite com lua (depois dorme)']];
-const TAP_ACTIONS=[['joy','Música feliz e risada'],['clock','Mostrar a hora'],['qr','QR code do site'],['pet','Carinho'],['sleep','Dormir'],['shake','Tonto e bravo'],['cheer','Comemorar'],['joke','Contar uma piada'],['game','Jogo de reflexo'],['simon','Jogo Genius'],['guess','Jogo adivinha o número'],['rps','Jogo pedra, papel e tesoura'],['dino','Jogo Dino'],['lander','Jogo pouso lunar'],['target','Jogo pare no alvo'],['timer','Jogo cronômetro'],['snake','Jogo Snake'],['dice','Dado'],['slots','Caça-níquel'],['ladder','Jogo cobras e escadas'],['flappy','Jogo Flappy (passarinho)'],['tower','Jogo Torre de blocos'],['weather','Previsão do tempo'],['focus','Pomodoro: 25 min de foco'],['mood','Perguntar como foi o dia'],['water','Lembrar de beber água'],['countdown','Contagem regressiva'],['video','Modo vídeo (1 min)']];
+const TAP_ACTIONS=[['joy','Música feliz e risada'],['clock','Mostrar a hora'],['qr','QR code do site'],['pet','Carinho'],['sleep','Dormir'],['shake','Tonto e bravo'],['cheer','Comemorar'],['joke','Contar uma piada'],['game','Jogo de reflexo'],['simon','Jogo Genius'],['guess','Jogo adivinha o número'],['rps','Jogo pedra, papel e tesoura'],['dino','Jogo Dino'],['lander','Jogo pouso lunar'],['target','Jogo pare no alvo'],['timer','Jogo cronômetro'],['snake','Jogo Snake'],['dice','Dado'],['slots','Caça-níquel'],['ladder','Jogo cobras e escadas'],['flappy','Jogo Flappy (passarinho)'],['tower','Jogo Torre de blocos'],['maze','Jogo Labirinto (inclinar o robô)'],['stopwatch','Cronômetro (marcar tempo)'],['weather','Previsão do tempo'],['focus','Pomodoro: 25 min de foco'],['mood','Perguntar como foi o dia'],['water','Lembrar de beber água'],['countdown','Contagem regressiva'],['video','Modo vídeo (1 min)']];
 const DEFAULT_TAP_ROWS=[[1,'joy'],[2,'s:dancando'],[5,'clock'],[6,'qr']];
 // Times of day: minute of the day -> action. The robot starts with 07:00 sunrise, 12:00 noon, 20:00 night.
 const DEFAULT_EVENT_ROWS=[[420,'sunrise'],[720,'noon'],[1200,'night']];
@@ -1378,7 +1386,7 @@ function renderTaps(){
     const cv=$('#tapSel'+n).closest('.tap-row').querySelector('canvas');
     tapPreviews.push(watch(cv,new ActionPreview(cv,tapAction(v))));
   }
-  const free=[1,2,3,4,5,6,7,8].filter(n=>!tapRows.has(n));
+  const free=[1,2,4,5,6,7,8].filter(n=>!tapRows.has(n));  // 3 = the game menu, fixed on the robot
   $('#tapAddN').innerHTML=free.map(n=>`<option value="${n}">${n===1?'1 toque':n+' toques'}</option>`).join('');
   $('#tapAdd').disabled=$('#tapAddN').disabled=!free.length;
   lab.tapMap=tapMapOf(tapRows);
