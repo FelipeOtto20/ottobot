@@ -25,7 +25,6 @@ Um robozinho de mesa emocional: dois olhos animados numa telinha OLED, um sensor
 | 🎮 **15 jogos** | jogados com toques na cabeça, chacoalhando ou inclinando ele |
 | 👒 **Roupinhas** | 12 acessórios (coroa, óculos, fones, cartola...): cada medalha libera um |
 | 🙃 **Sente o corpo** | de cabeça pra baixo = silêncio, deitado = dorme, no colo = feliz, inclinado = acha que vai cair |
-| 📲 **Notificações** | mensagem no WhatsApp ou Instagram aparece na telinha (opção no app) |
 | 🤝 **Amigos** | dois Ottobots perto um do outro se cumprimentam, conversam e sentem o humor um do outro |
 | 🎶 **10 musiquinhas** | com coreografia no tempo da música |
 | 🧠 **Personalidade** | muda com o jeito que você cuida dele, dia após dia |
@@ -72,7 +71,7 @@ Cada tela é só um punhado de números (formato dos olhos, humor, para onde olh
 ## Menu, roupas e gestos
 
 <table>
-<tr><td align="center" width="25%"><img src="docs/novidades/menu.gif" width="200" alt="📋 Menu"><br><b>📋 Menu</b><br><sub>3 toques abrem; toque desce, segure até apitar e solte para escolher</sub></td><td align="center" width="25%"><img src="docs/novidades/roupas.gif" width="200" alt="👒 Roupas"><br><b>👒 Roupas</b><br><sub>experimente no rosto dele; as trancadas mostram a medalha que libera</sub></td><td align="center" width="25%"><img src="docs/novidades/notificacao.gif" width="200" alt="📲 Notificações"><br><b>📲 Notificações</b><br><sub>WhatsApp e Instagram, com ou sem o nome de quem mandou</sub></td><td align="center" width="25%"><img src="docs/novidades/atualizando.gif" width="200" alt="📡 Atualizando"><br><b>📡 Atualizando</b><br><sub>a tela durante uma atualização pelo Wi-Fi</sub></td></tr>
+<tr><td align="center" width="33%"><img src="docs/novidades/menu.gif" width="200" alt="📋 Menu"><br><b>📋 Menu</b><br><sub>3 toques abrem; toque desce, segure até apitar e solte para escolher</sub></td><td align="center" width="33%"><img src="docs/novidades/roupas.gif" width="200" alt="👒 Roupas"><br><b>👒 Roupas</b><br><sub>experimente no rosto dele; as trancadas mostram a medalha que libera</sub></td><td align="center" width="33%"><img src="docs/novidades/atualizando.gif" width="200" alt="📡 Atualizando"><br><b>📡 Atualizando</b><br><sub>a tela durante uma atualização pelo Wi-Fi</sub></td></tr>
 </table>
 
 - **Menu** (3 toques): **Jogos** (com o seu recorde embaixo de cada um), **Ferramentas** (relógio, cronômetro, pomodoro, clima, dado), **Roupas** e **Sair**. Um jogo aberto pelo menu volta para ele quando acaba, ganhando ou perdendo; só sai do menu em "Sair".
@@ -162,10 +161,8 @@ Cada medalha libera uma roupinha (menu → Roupas).
 
 - **Início**: o rosto dele ao vivo, coração, atalhos, foco, musiquinhas, modo vídeo, jogos, diário, personalidade, conquistas, datas, cenas, caras e recado na telinha.
 - **Conversa**: IA grátis ([chave do Gemini](https://aistudio.google.com/apikey), fica só no celular). Ele responde em frases curtas, escolhe animações, inventa caras e músicas e reage quando você faz carinho nele.
-- **Perto**: radar do Bluetooth, festa quando você chega, aviso quando ele está carente, 3 piadas por dia, notificações do WhatsApp e do Instagram na telinha (o texto da mensagem nunca sai do celular; precisa do app extra Ottobot Avisos, veja abaixo).
+- **Perto**: radar do Bluetooth, festa quando você chega, aviso quando ele está carente, 3 piadas por dia.
 - **Ajustes**: tudo do robô (telas, toques, horários, sono, som, Wi-Fi, senha, lembretes, clima, atualizações).
-
-**Notificações (opcional):** o Play Protect bloqueia app baixado que lê notificações, por isso essa parte fica num app extra, o `ottobot-avisos.apk` (na [última versão](https://github.com/FelipeOtto20/ottobot/releases/latest)). Instale pelo computador com o cabo USB e a depuração USB ligada: `adb install ottobot-avisos.apk`. Depois, no app, aba Perto, ligue "Mostrar no robô" e libere o acesso às notificações para o Ottobot Avisos.
 
 Instale pelo arquivo `ottobot.apk` da [última versão](https://github.com/FelipeOtto20/ottobot/releases/latest) ou pela página do robô (`http://ottobot.local`). Android 12 ou mais novo. Quando sai uma versão nova aqui, o app avisa e atualiza o robô e ele mesmo.
 
