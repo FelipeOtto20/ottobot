@@ -63,7 +63,7 @@ Cada tela é só um punhado de números (formato dos olhos, humor, para onde olh
 <tr><td align="center"><img src="docs/reacoes/sunrise.gif" width="160" alt="Bom dia"><br><sub><b>Bom dia</b></sub></td><td align="center"><img src="docs/reacoes/noon.gif" width="160" alt="Meio-dia"><br><sub><b>Meio-dia</b></sub></td><td align="center"><img src="docs/reacoes/night.gif" width="160" alt="Boa noite"><br><sub><b>Boa noite</b></sub></td></tr>
 </table>
 
-- **Toques rápidos**: cada quantidade (1 a 8 toques) faz o que você escolher no app. Padrão: 1 = alegria, 2 = dança, 3 = menu (fixo), 5 = hora, 6 = QR code da página.
+- **Toques rápidos**: cada quantidade (1 a 8 toques) faz o que você escolher no app. Padrão: 1 = alegria, 2 = dança, 3 = menu, 5 = hora, 6 = QR code da página.
 - **Segurar**: carinho. Quanto mais tempo, mais derretido: "^ ^", olhos de coração, nas nuvens (com brilhos e notinhas).
 - **Chacoalhar** (balançar pros lados várias vezes; um tranco ou deitar não conta): fica tonto (olhos em espiral) e depois bravo e suando.
 - **Sono**: dorme depois de um tempo parado, só à noite ou nunca. Dormindo, um toque canta canção de ninar e 3 toques rápidos acordam.
@@ -74,7 +74,7 @@ Cada tela é só um punhado de números (formato dos olhos, humor, para onde olh
 <tr><td align="center" width="33%"><img src="docs/novidades/menu.gif" width="200" alt="📋 Menu"><br><b>📋 Menu</b><br><sub>3 toques abrem; toque desce, segure até apitar e solte para escolher</sub></td><td align="center" width="33%"><img src="docs/novidades/roupas.gif" width="200" alt="👒 Roupas"><br><b>👒 Roupas</b><br><sub>experimente no rosto dele; as trancadas mostram a medalha que libera</sub></td><td align="center" width="33%"><img src="docs/novidades/atualizando.gif" width="200" alt="📡 Atualizando"><br><b>📡 Atualizando</b><br><sub>a tela durante uma atualização pelo Wi-Fi</sub></td></tr>
 </table>
 
-- **Menu** (3 toques): **Jogos** (com o seu recorde embaixo de cada um), **Ferramentas** (relógio, cronômetro, pomodoro, clima, dado), **Roupas** e **Sair**. Um jogo aberto pelo menu volta para ele quando acaba, ganhando ou perdendo; só sai do menu em "Sair".
+- **Menu** (3 toques, dá para trocar no app): **Jogos** (com o seu recorde embaixo de cada um), **Ferramentas** (relógio, cronômetro, pomodoro, clima, dado), **Roupas** e **Sair**. Um jogo aberto pelo menu volta para ele quando acaba, ganhando ou perdendo; só sai do menu em "Sair".
 - **De cabeça pra baixo** (1,5 s): liga ou desliga o silêncio.
 - **Deitado de lado** (3 s): boceja e dorme; em pé de novo, acorda.
 - **No colo** depois de um tempo parado: olha pra você feliz, com coraçõezinhos.
