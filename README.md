@@ -162,8 +162,10 @@ Cada medalha libera uma roupinha (menu → Roupas).
 
 - **Início**: o rosto dele ao vivo, coração, atalhos, foco, musiquinhas, modo vídeo, jogos, diário, personalidade, conquistas, datas, cenas, caras e recado na telinha.
 - **Conversa**: IA grátis ([chave do Gemini](https://aistudio.google.com/apikey), fica só no celular). Ele responde em frases curtas, escolhe animações, inventa caras e músicas e reage quando você faz carinho nele.
-- **Perto**: radar do Bluetooth, festa quando você chega, aviso quando ele está carente, 3 piadas por dia, notificações do WhatsApp e do Instagram na telinha (o texto da mensagem nunca sai do celular).
+- **Perto**: radar do Bluetooth, festa quando você chega, aviso quando ele está carente, 3 piadas por dia, notificações do WhatsApp e do Instagram na telinha (o texto da mensagem nunca sai do celular; precisa do app extra Ottobot Avisos, veja abaixo).
 - **Ajustes**: tudo do robô (telas, toques, horários, sono, som, Wi-Fi, senha, lembretes, clima, atualizações).
+
+**Notificações (opcional):** o Play Protect bloqueia app baixado que lê notificações, por isso essa parte fica num app extra, o `ottobot-avisos.apk` (na [última versão](https://github.com/FelipeOtto20/ottobot/releases/latest)). Instale pelo computador com o cabo USB e a depuração USB ligada: `adb install ottobot-avisos.apk`. Depois, no app, aba Perto, ligue "Mostrar no robô" e libere o acesso às notificações para o Ottobot Avisos.
 
 Instale pelo arquivo `ottobot.apk` da [última versão](https://github.com/FelipeOtto20/ottobot/releases/latest) ou pela página do robô (`http://ottobot.local`). Android 12 ou mais novo. Quando sai uma versão nova aqui, o app avisa e atualiza o robô e ele mesmo.
 
