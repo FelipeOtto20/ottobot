@@ -13,6 +13,8 @@ Um robozinho de mesa emocional: dois olhos animados numa telinha OLED, um sensor
 
 **⬇ [Baixe a versão mais nova (firmware + app Android)](https://github.com/FelipeOtto20/ottobot/releases/latest)**
 
+**🟦 Também existe uma versão com tela de toque colorida de 480 × 480 e o Diamond Rush original: [veja aqui](#ottobot-com-tela-480-esp32-s3)**
+
 ---
 
 ## O que ele faz
@@ -191,6 +193,40 @@ Cada medalha libera um acessório (menu → Acessórios) e dá 50 moedas.
 
 Instale pelo arquivo `ottobot.apk` da [última versão](https://github.com/FelipeOtto20/ottobot/releases/latest) ou pela página do robô (`http://ottobot.local`). Android 12 ou mais novo. Quando sai uma versão nova aqui, o app avisa e atualiza o robô e ele mesmo.
 
+## Ottobot com tela 480 (ESP32-S3)
+
+Uma segunda versão do Ottobot, numa placa pronta com tela colorida de toque: **GUITION ESP32-4848S040** (ESP32-S3, 16 MB de flash, 8 MB de PSRAM, tela ST7701 de 480 × 480 com toque GT911). É o mesmo Ottobot do OLED (emoções, reações, cenas, acessórios, moedas, loja, app e IA), com o rosto na tela grande e tudo comandado pelo toque na própria tela. Não precisa montar nada: a placa já vem com tela, toque e Wi-Fi.
+
+**Como funciona**
+
+- O rosto é o mesmo do OLED, ampliado no meio da tela. Tocar na tela é como tocar na cabeça dele: carinho, toques contados e jogos.
+- O botão **≡** no canto de cima abre o menu tocável: toque num item para abrir; **Anterior** e **Próximo** trocam de página.
+- A rede própria se chama **Ottobot-480** (senha inicial `ottobot1`) e a página é `http://ottobot-480.local` (só Wi-Fi e download do app; os comandos ficam no app).
+- O app reconhece a placa sozinho e cuida de dois robôs (um OLED e um 480): **Ajustes › Cadastrar outro robô** e o botão **Robôs** na tela inicial.
+
+**Diferenças e exceções**
+
+| | OLED (ESP32-C3) | Tela 480 (ESP32-S3) |
+|---|---|---|
+| Toque | sensor na cabeça | a tela inteira, com botões |
+| Sensor de movimento (MPU6050) | vem montado | opcional (I2C SDA 19 / SCL 45) |
+| Sem o sensor de movimento | — | Batatinha frita sai do menu e do app; Labirinto, Snake, Corrida, Pouso e Diamantes mostram setas na tela |
+| Som | buzzer | desligado por padrão |
+| Jogos de toques contados | conta os toques | botões na tela: Jokenpô (Pedra, Papel, Tesoura), Adivinha (1 a 10), Genius (Curto, Longo) |
+| Cobras e escadas | telinha 128 × 64 | tela inteira, colorida e animada: escadas de madeira, cobras com olhos, dado grande pulando, peças que saltam casa a casa e confete na vitória |
+| Brilho | — | 100% de dia, 70% à noite |
+| Atualizações | pelo app (estas versões do GitHub) | pelo cabo USB; o app nunca oferece o firmware do OLED para ela |
+
+**Exclusivo da tela 480: Diamond Rush**
+
+O clássico de celular da Gameloft (2006) rodando o jogo Java original dentro da própria placa, numa máquina virtual Java ([Flint JVM](https://github.com/FlintVN/FlintESPJVM)) com a camada de jogos de celular do [ESP32-J2ME](https://github.com/bbnmn4800/ESP32-J2ME). O celular não é preciso: os 3 mundos (40 fases) e o progresso ficam na placa.
+
+- Abre pelo menu **Jogos › Diamond Rush** ou pela lista de jogos do app (só aparece para a tela 480).
+- Controle na tela: setas, **A** (ação), **B** (menu), **★** (voltar ao checkpoint); os cantos de baixo da imagem são o **Skip/OK** e o **voltar** do jogo. O controle do app também funciona (X = checkpoint).
+- O botão **≡** no canto abre **CONTROLES** (mostra ou esconde o controle) e **SAIR** (volta ao Ottobot). A opção de sair do menu do jogo também volta, e qualquer reinício cai no Ottobot.
+- Cada fase vencida pela primeira vez dá moedas para o Ottobot, fora do limite diário dos jogos: **Angkor** 50 a 350, **Baviera** 150 a 630, **Tibete** 300 a 1080 (17.330 no jogo todo). Elas entram quando você volta para ele, com os olhos de cifrão.
+- O arquivo do jogo é da Gameloft e não é distribuído aqui.
+
 ## Hardware e montagem
 
 **🔧 [Manual de montagem completo](MONTAGEM.md)**: peças, passo a passo das ligações com desenhos, como prender na caixa e problemas comuns.
@@ -222,4 +258,5 @@ Para quem quiser mexer, o robô tem uma API HTTP simples: `/api/state`, `/api/co
 
 - **Projeto original e direitos de criação**: [MONSTRIX - Robot Emotional Companion](https://makerworld.com/pt/models/1941340-monstrix-robot-emotional-companion), de **Igor Belyi**, remix do [LDR Little Robot](https://makerworld.com/en/models/222658), de **Max Kern** (MakerWorld, CC BY-SA). O Ottobot é um aperfeiçoamento desse projeto.
 - Olhos animados pela biblioteca [RoboEyes](https://github.com/FluxGarage/RoboEyes), da FluxGarage.
+- Tela 480: [Arduino_GFX](https://github.com/moononournation/Arduino_GFX); Diamond Rush pela [Flint JVM](https://github.com/FlintVN/FlintESPJVM) e pelo [ESP32-J2ME](https://github.com/bbnmn4800/ESP32-J2ME) (MIT). Diamond Rush © Gameloft.
 - Clima do [Open-Meteo](https://open-meteo.com/); localização aproximada do ip-api.com.
