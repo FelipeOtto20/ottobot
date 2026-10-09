@@ -98,7 +98,7 @@ Gravados direto da tela do robô.
 <tr><td align="center" width="33%"><img src="docs/novidades/menu.gif" width="200" alt="📋 Menu"><br><b>📋 Menu</b><br><sub>3 toques abrem; toque desce, segure até apitar e solte para escolher</sub></td><td align="center" width="33%"><img src="docs/novidades/roupas.gif" width="200" alt="🎩 Acessórios"><br><b>🎩 Acessórios</b><br><sub>experimente no rosto dele; os trancados mostram a medalha que libera</sub></td><td align="center" width="33%"><img src="docs/novidades/atualizando.gif" width="200" alt="📡 Atualizando"><br><b>📡 Atualizando</b><br><sub>a tela durante uma atualização pelo Wi-Fi</sub></td></tr>
 </table>
 
-- **Menu** (3 toques, dá para trocar no app): **Jogos** (com o seu recorde embaixo de cada um), **Ferramentas** (relógio, cronômetro, pomodoro, clima, dado), **Acessórios** (os das conquistas e os comprados) e **Sair**. Quando um jogo acaba ele volta para o rostinho.
+- **Menu** (3 toques, dá para trocar no app; abre na hora do último toque): **Jogos** (com o seu recorde embaixo de cada um), **Ferramentas** (relógio, cronômetro, pomodoro, clima, dado, humor e QR do app), **Acessórios** (os das conquistas e os comprados) e **Sair**. Quando um jogo acaba ele volta para o rostinho.
 - **De cabeça pra baixo** (1,5 s): liga ou desliga o silêncio.
 - **Deitado de lado** (3 s): boceja e dorme; em pé de novo, acorda.
 - **No colo** depois de um tempo parado: olha pra você feliz, com coraçõezinhos.
@@ -155,7 +155,7 @@ Durante um jogo nada mais funciona (comandos, cenas, chacoalhar). **Segure a cab
 | 🌙 | Soninho | 0:48 |
 | 🎉 | Festa 8-bit | 0:51 |
 
-Mais 22 na loja do app: 20 de domínio público (Bate o sino, Noite feliz, Cancan, Marcha turca, Danúbio azul, Lago dos cisnes, Guilherme Tell, The Entertainer, Canon em Ré, Frère Jacques, La cucaracha, Os santos, Greensleeves, Marcha nupcial, Oh! Susana, Ninar de Brahms, Pequena serenata, Minueto em Sol, Rema rema e Primavera) e trechos dos temas de **Missão Impossível** e **Sweden** (Minecraft).
+Mais 42 na loja do app: 40 de domínio público (Bate o sino, Noite feliz, Cancan, Marcha turca, Danúbio azul, Lago dos cisnes, Guilherme Tell, The Entertainer, Canon em Ré, Frère Jacques, La cucaracha, Os santos, Greensleeves, Marcha nupcial, Oh! Susana, Ninar de Brahms, Pequena serenata, Minueto em Sol, Rema rema, Primavera, Korobeiniki do Tetris, Maria tinha um carneirinho, O velho MacDonald, Ponte de Londres, Yankee Doodle, Amazing Grace, Auld Lang Syne, Corrida de Camptown, Clementine, A dona aranha, Feliz Natal, Deck the halls, Quinta sinfonia, Tocata e fuga, Marcha fúnebre, Novo Mundo, Pop! Lá vai o furão, Alouette, Bingo e As rodas do ônibus) e trechos dos temas de **Missão Impossível** e **Sweden** (Minecraft). As músicas a partir da 33ª pedem o firmware 52 ou mais novo.
 
 A coreografia é calculada no app para o tempo exato de cada batida e o robô dança no mesmo relógio da música: pulinhos no tempo forte, olhos seguindo a melodia (nota aguda olha para cima), giros, piscadas, olhos crescendo, efeitos que trocam a cada 2 compassos e olhos de coração no fim. Também tem **modo música**: o celular escuta a música que está tocando (pelo microfone) e ele dança mostrando as frequências. Volume do bipe ajustável no app.
 
