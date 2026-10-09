@@ -136,6 +136,8 @@ Gravados direto da tela do robô.
 <tr><td align="center" width="33%"><img src="docs/jogos/flappy.gif" width="200" alt="🐦 Flappy"><br><b>🐦 Flappy</b><br><sub>Toque para bater as asas e passe entre os canos</sub></td><td align="center" width="33%"><img src="docs/jogos/torre.gif" width="200" alt="🧱 Torre"><br><b>🧱 Torre</b><br><sub>Toque para soltar o bloco bem em cima da torre</sub></td><td align="center" width="33%"><b>🌀 Labirinto</b><br><sub>Incline o robô para rolar a bolinha até o buraco, contra o tempo; cada fase é um labirinto maior</sub></td></tr>
 </table>
 
+**💎 Diamantes** se joga com o controle do celular: 50 missões de quebra-cabeça em 8 mundos (pedras que caem, chaves e portas, botões e grades, aranhas, martelo, gancho e passagens secretas). O mundo novo, **Castelo** (missões 41 a 50), tem fases feitas à mão que juntam tudo isso. Todas as missões são conferidas por um programa que as resolve sozinho.
+
 Durante um jogo nada mais funciona (comandos, cenas, chacoalhar). **Segure a cabeça 3 s para sair** (aparece a dica e uma barrinha; no Pouso segurar é o motor, então ele sai quando a nave bate). Perdeu: **GAME OVER** e volta para o rostinho; nenhum jogo recomeça sozinho. 10 s sem jogar, ele sai. Os recordes ficam salvos e as partidas dão moedas.
 
 ## Musiquinhas e dança
@@ -153,7 +155,7 @@ Durante um jogo nada mais funciona (comandos, cenas, chacoalhar). **Segure a cab
 | 🌙 | Soninho | 0:48 |
 | 🎉 | Festa 8-bit | 0:51 |
 
-Mais 20 na loja do app, todas de domínio público: Bate o sino, Noite feliz, Cancan, Marcha turca, Danúbio azul, Lago dos cisnes, Guilherme Tell, The Entertainer, Canon em Ré, Frère Jacques, La cucaracha, Os santos, Greensleeves, Marcha nupcial, Oh! Susana, Ninar de Brahms, Pequena serenata, Minueto em Sol, Rema rema e Primavera.
+Mais 22 na loja do app: 20 de domínio público (Bate o sino, Noite feliz, Cancan, Marcha turca, Danúbio azul, Lago dos cisnes, Guilherme Tell, The Entertainer, Canon em Ré, Frère Jacques, La cucaracha, Os santos, Greensleeves, Marcha nupcial, Oh! Susana, Ninar de Brahms, Pequena serenata, Minueto em Sol, Rema rema e Primavera) e trechos dos temas de **Missão Impossível** e **Sweden** (Minecraft).
 
 A coreografia é calculada no app para o tempo exato de cada batida e o robô dança no mesmo relógio da música: pulinhos no tempo forte, olhos seguindo a melodia (nota aguda olha para cima), giros, piscadas, olhos crescendo, efeitos que trocam a cada 2 compassos e olhos de coração no fim. Também tem **modo música**: o celular escuta a música que está tocando (pelo microfone) e ele dança mostrando as frequências. Volume do bipe ajustável no app.
 
@@ -189,20 +191,38 @@ Cada medalha libera um acessório (menu → Acessórios) e dá 50 moedas.
 - **Conversa**: IA grátis ([chave do Gemini](https://aistudio.google.com/apikey), fica só no celular). Ele responde em frases curtas, escolhe animações, inventa caras e músicas e reage quando você faz carinho nele.
 - **Loja**: moedas, a boca, acessórios e músicas para provar e comprar, e escolher o que ele usa.
 - **Perto**: radar do Bluetooth, festa quando você chega, aviso quando ele está carente, 3 piadas por dia.
+- **Controle**: setas ou joystick, A e B, tela em pé ou deitada. Em **✏️ Ajustar** você arrasta cada botão para onde quiser, muda o tamanho e liga o modo canhoto; fica salvo no celular, um jeito para a tela em pé e outro para deitada.
 - **Ajustes**: tudo do robô (telas, toques, horários, sono, som, Wi-Fi, senha, lembretes, clima) e as atualizações, com as etapas e a porcentagem na tela.
 
 Instale pelo arquivo `ottobot.apk` da [última versão](https://github.com/FelipeOtto20/ottobot/releases/latest) ou pela página do robô (`http://ottobot.local`). Android 12 ou mais novo. Quando sai uma versão nova aqui, o app avisa e atualiza o robô e ele mesmo.
 
 ## Ottobot com tela 480 (ESP32-S3)
 
-Uma segunda versão do Ottobot, numa placa pronta com tela colorida de toque: **GUITION ESP32-4848S040** (ESP32-S3, 16 MB de flash, 8 MB de PSRAM, tela ST7701 de 480 × 480 com toque GT911). É o mesmo Ottobot do OLED (emoções, reações, cenas, acessórios, moedas, loja, app e IA), com o rosto na tela grande e tudo comandado pelo toque na própria tela. Não precisa montar nada: a placa já vem com tela, toque e Wi-Fi.
+Uma segunda versão do Ottobot, numa placa pronta com tela colorida de toque. É o mesmo Ottobot do OLED (emoções, reações, cenas, acessórios, moedas, loja, app e IA), com o rosto na tela grande e tudo comandado pelo toque. Não precisa montar nada: a placa já vem com tela, toque, Wi-Fi e amplificador de som.
+
+**A tela**
+
+| | |
+|---|---|
+| Placa | **GUITION ESP32-4848S040** (vendida como "ESP32-S3 4848S040", painel de parede de 4") |
+| Processador | ESP32-S3 de dois núcleos a 240 MHz, 16 MB de flash, 8 MB de PSRAM |
+| Tela | 4", IPS, 480 × 480, controlador ST7701 num barramento RGB de 16 bits (RGB565) |
+| Toque | capacitivo GT911 (I2C SDA 19 / SCL 45) |
+| Som | amplificador NS4168 (I2S) com conector para alto-falante de 4 a 8 Ω |
+| Outros | Wi-Fi, Bluetooth LE, USB-C (CH340) e microSD; algumas versões trazem 1 a 3 relés, que o Ottobot não usa |
 
 **Como funciona**
 
-- O rosto é o mesmo do OLED, ampliado no meio da tela. Tocar na tela é como tocar na cabeça dele: carinho, toques contados e jogos.
-- O botão **≡** no canto de cima abre o menu tocável: toque num item para abrir; **Anterior** e **Próximo** trocam de página.
+- Use a placa com o **cabo USB do lado direito**: o rosto, os jogos e o toque já estão girados para essa posição.
+- O rosto é o mesmo do OLED, ampliado no meio da tela com bordas suavizadas e degradê azul. Tocar na tela é como tocar na cabeça dele: carinho, toques contados e jogos.
+- Dormindo, ele só acorda com **6 toques rápidos**, e acorda tonto (a placa não tem o chacoalhão do sensor de movimento).
+- O botão **≡** no canto de cima abre o menu tocável. **Anterior** e **Próximo** só aparecem quando existe outra página.
 - A rede própria se chama **Ottobot-480** (senha inicial `ottobot1`) e a página é `http://ottobot-480.local` (só Wi-Fi e download do app; os comandos ficam no app).
-- O app reconhece a placa sozinho e cuida de dois robôs (um OLED e um 480): **Ajustes › Cadastrar outro robô** e o botão **Robôs** na tela inicial.
+- O app reconhece a placa sozinho e cuida de dois robôs (um OLED e um 480): **Ajustes › Cadastrar outro robô** e o botão **Robôs** na tela inicial. Os dois robôs se encontram pelo Wi-Fi, se cumprimentam e conversam quando estão na mesma rede.
+
+**Alto-falante**
+
+A placa sai de fábrica com o amplificador desligado do ESP32. Para ter som, mova os três resistores de 0 Ω de **R25, R26 e R27** para **R21, R22 e R23** e ligue um alto-falante pequeno (4 a 8 Ω) no conector da placa. Esses resistores não têm lado. Com isso os pinos IO1 (BCLK), IO2 (LRCLK) e IO40 (DIN) vão para o amplificador em vez dos relés. Sem a troca, tudo funciona, só que mudo. O volume é o mesmo do app.
 
 **Diferenças e exceções**
 
@@ -211,23 +231,43 @@ Uma segunda versão do Ottobot, numa placa pronta com tela colorida de toque: **
 | Toque | sensor na cabeça | a tela inteira, com botões |
 | Sensor de movimento (MPU6050) | vem montado | opcional (I2C SDA 19 / SCL 45) |
 | Sem o sensor de movimento | — | Batatinha frita sai do menu e do app; Labirinto, Snake, Corrida, Pouso e Diamantes mostram setas na tela |
-| Som | buzzer | desligado por padrão |
+| Acordar | chacoalhar ou 3 toques | 6 toques rápidos (acorda tonto) |
+| Som | buzzer | alto-falante pelo amplificador da placa (veja acima) |
 | Jogos de toques contados | conta os toques | botões na tela: Jokenpô (Pedra, Papel, Tesoura), Adivinha (1 a 10), Genius (Curto, Longo) |
 | Mini jogos | telinha 128 × 64 | tela inteira, coloridos e animados (Flappy com céu e canos, Dino de dia e de noite, Snake, Torre, Corrida, Caça-níquel, Jokenpô, Genius, Adivinha, Reflexo, Alvo, Tempo, Pouso na lua, Labirinto, Diamantes, Dado, Cronômetro e Cobras e escadas com escadas de madeira e cobras com olhos) |
-| Rosto e animações | pixels da tela OLED | os mesmos, com bordas suavizadas, degradê azul e brilho, sem piscar |
-| Menu | toque desce, segurar escolhe | itens tocáveis; Anterior e Próximo só quando há outra página |
+| Rosto e animações | pixels da tela OLED | os mesmos, com bordas suavizadas e degradê azul, sem piscar |
+| Menu | toque desce, segurar escolhe | itens tocáveis |
 | Brilho | — | 100% de dia, 70% à noite |
+| Jogo exclusivo | — | Diamond Rush original (abaixo) |
 | Atualizações | pelo app (estas versões do GitHub) | pelo cabo USB; o app nunca oferece o firmware do OLED para ela |
+
+**Firmwares diferentes**
+
+O OLED tem um firmware só (Arduino, ESP32-C3), que o app atualiza pelo Wi-Fi com as versões publicadas aqui.
+
+A tela 480 guarda **dois firmwares na mesma flash** e liga sempre pelo Ottobot:
+
+| Parte da flash | Endereço | O que tem |
+|---|---|---|
+| nvs | 0x9000 | configurações, moedas e recordes do Ottobot; os dois firmwares usam (o jogo deixa ali as moedas das fases) |
+| app0 | 0x10000 (3 MB) | **Ottobot**: o mesmo código do OLED, com a tela 480 (Arduino_GFX), o toque e o som por I2S |
+| app1 | 0x310000 (3 MB) | **Diamond Rush**: máquina virtual Java ([Flint JVM](https://github.com/FlintVN/FlintESPJVM), ESP-IDF 5.5) com a tela, o toque, o controle do app e um sintetizador MIDI para o som |
+| ffat | 0x610000 (9,9 MB) | arquivos do jogo (classes Java, imagens e os textos em português) e os saves |
+
+Ao escolher **Jogos › Diamond Rush**, o Ottobot marca o firmware do jogo para a próxima partida e reinicia. O jogo, assim que abre, já marca o Ottobot de volta: **SAIR**, a opção de sair do jogo ou qualquer reinício voltam ao Ottobot. Enquanto o jogo está aberto, o app não muda configurações (elas são do Ottobot) e avisa isso.
+
+Os dois firmwares são gravados pelo cabo USB. O Diamond Rush é da Gameloft e não é distribuído aqui.
 
 **Exclusivo da tela 480: Diamond Rush**
 
-O clássico de celular da Gameloft (2006) rodando o jogo Java original dentro da própria placa, numa máquina virtual Java ([Flint JVM](https://github.com/FlintVN/FlintESPJVM)) com a camada de jogos de celular do [ESP32-J2ME](https://github.com/bbnmn4800/ESP32-J2ME). O celular não é preciso: os 3 mundos (40 fases) e o progresso ficam na placa.
+O clássico de celular da Gameloft (2006) rodando o jogo Java original dentro da própria placa, com a camada de jogos de celular do [ESP32-J2ME](https://github.com/bbnmn4800/ESP32-J2ME). O celular não é preciso: os 3 mundos (40 fases) e o progresso ficam na placa.
 
+- **Em português**: menus, avisos, loja e dicas traduzidos, e as instruções falam dos botões da tela ("Toque A para jogar", "Estrela: reinicia e perde uma vida").
+- **Com som**: as músicas e os efeitos do jogo (arquivos MIDI) tocam no alto-falante por um sintetizador feito para a placa.
 - Abre pelo menu **Jogos › Diamond Rush** ou pela lista de jogos do app (só aparece para a tela 480).
-- Controle na tela: setas, **A** (ação), **B** (menu), **★** (voltar ao checkpoint); os cantos de baixo da imagem são o **Skip/OK** e o **voltar** do jogo. O controle do app também funciona (X = checkpoint).
-- O botão **≡** no canto abre **CONTROLES** (mostra ou esconde o controle) e **SAIR** (volta ao Ottobot). A opção de sair do menu do jogo também volta, e qualquer reinício cai no Ottobot.
-- Cada fase vencida pela primeira vez dá moedas para o Ottobot, fora do limite diário dos jogos: **Angkor** 50 a 350, **Baviera** 150 a 630, **Tibete** 300 a 1080 (17.330 no jogo todo). Elas entram quando você volta para ele, com os olhos de cifrão.
-- O arquivo do jogo é da Gameloft e não é distribuído aqui.
+- Controle na tela: setas, **A** (ação), **B** (menu), **★** (voltar ao checkpoint); os cantos de baixo da imagem são o **Skip/OK** e o **voltar** do jogo. O controle do app também funciona, com a ★.
+- O botão **≡** no canto abre **CONTROLES** (mostra ou esconde o controle) e **SAIR** (volta ao Ottobot).
+- Cada fase vencida pela primeira vez dá moedas para o Ottobot, fora do limite diário dos jogos: **Angkor** 50 a 350, **Baviera** 150 a 630, **Tibete** 300 a 1080 (17.330 no jogo todo). O valor aparece no canto de cima da tela na hora, e as moedas entram quando você volta para ele, com os olhos de cifrão.
 
 ## Hardware e montagem
 
