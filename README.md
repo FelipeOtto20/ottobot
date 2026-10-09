@@ -213,7 +213,9 @@ Uma segunda versão do Ottobot, numa placa pronta com tela colorida de toque: **
 | Sem o sensor de movimento | — | Batatinha frita sai do menu e do app; Labirinto, Snake, Corrida, Pouso e Diamantes mostram setas na tela |
 | Som | buzzer | desligado por padrão |
 | Jogos de toques contados | conta os toques | botões na tela: Jokenpô (Pedra, Papel, Tesoura), Adivinha (1 a 10), Genius (Curto, Longo) |
-| Cobras e escadas | telinha 128 × 64 | tela inteira, colorida e animada: escadas de madeira, cobras com olhos, dado grande pulando, peças que saltam casa a casa e confete na vitória |
+| Mini jogos | telinha 128 × 64 | tela inteira, coloridos e animados (Flappy com céu e canos, Dino de dia e de noite, Snake, Torre, Corrida, Caça-níquel, Jokenpô, Genius, Adivinha, Reflexo, Alvo, Tempo, Pouso na lua, Labirinto, Diamantes, Dado, Cronômetro e Cobras e escadas com escadas de madeira e cobras com olhos) |
+| Rosto e animações | pixels da tela OLED | os mesmos, com bordas suavizadas, degradê azul e brilho, sem piscar |
+| Menu | toque desce, segurar escolhe | itens tocáveis; Anterior e Próximo só quando há outra página |
 | Brilho | — | 100% de dia, 70% à noite |
 | Atualizações | pelo app (estas versões do GitHub) | pelo cabo USB; o app nunca oferece o firmware do OLED para ela |
 
